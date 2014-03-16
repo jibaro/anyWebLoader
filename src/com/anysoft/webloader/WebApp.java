@@ -41,6 +41,16 @@ import com.anysoft.util.DefaultProperties;
  * </root>
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
+ * ### 版本<br>
+ * 
+ * - 1.0.0 <br>
+ *     + add {@link com.anysoft.webloader.ServletRequestProperties ServletRequestProperties},A Properties Wrapper 
+ *     for HttpServletRequest.<br>
+ *     + add {@link com.anysoft.webloader.ServletConfigProperties ServletConfigProperties},A Properties wrapper
+ *     for ServletConfig<br>
+ *     
+ *     
+ * 
  * @author duanyy
  *
  */
