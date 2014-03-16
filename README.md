@@ -13,15 +13,15 @@ A framework which help you download your web library and load web context.
 2. 将HttpServlet功能映射到ServletHandler
 3. 自动下载library指定的目录，并动态加载
 
-####ServletContextListener的配置
+#### ServletContextListener的配置
 
 在web.xml中配置Listener，见WebAppContextListener.
 
-####SevletHandler的配置
+#### SevletHandler的配置
 
 在web.xml中配置Servlet，见ServletAgent.
 
-####库文件服务端配置
+#### 库文件服务端配置
 
 首先，需要将库文件存放在一个公共服务器之上，可以通过标准URL进行访问，例如file,http等.
 
@@ -32,3 +32,8 @@ A framework which help you download your web library and load web context.
         <module jar="anyLogicbus.jar" md5="937a43fd16c480b9e4d221d6828cb467"
         url="file:///D:\ecloud\18923882238\logicbus\libs\anyLogicbus.jar"/>
     </root>
+
+#### Version
+- 1.0.1
+    + add ServletRequestProperties which is a Properties wrapper for HttpServletRequest.
+    + add ServletConfigProperties which is a Properties wrapper for ServletConfig.
