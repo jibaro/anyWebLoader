@@ -14,7 +14,7 @@ public class ServletConfigProperties extends Properties {
 
 	protected ServletConfig servletConfig = null;
 	
-	protected ServletConfigProperties(ServletConfig sc){
+	public ServletConfigProperties(ServletConfig sc){
 		servletConfig = sc;
 	}
 	@Override
