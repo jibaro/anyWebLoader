@@ -1,6 +1,7 @@
 package com.anysoft.webloader;
 
 import com.anysoft.util.DefaultProperties;
+import javax.servlet.ServletContext;
 
 /**
  * Web应用
@@ -41,15 +42,9 @@ import com.anysoft.util.DefaultProperties;
  * </root>
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * 
- * ### 版本<br>
- * 
- * - 1.0.0 <br>
- *     + add {@link com.anysoft.webloader.ServletRequestProperties ServletRequestProperties},A Properties Wrapper 
- *     for HttpServletRequest.<br>
- *     + add {@link com.anysoft.webloader.ServletConfigProperties ServletConfigProperties},A Properties wrapper
- *     for ServletConfig<br>
- *     
- *     
+ * @version 1.0.2 [20140319 by duanyy] <br>
+ * - add servletContext parameter to {@link com.anysoft.webloader.WebApp#init(DefaultProperties, ServletContext) WebApp.init()} 
+ *   and  {@link com.anysoft.webloader.WebApp#destroy(ServletContext) WebApp.destroy()}<br>
  * 
  * @author duanyy
  *
@@ -59,10 +54,10 @@ public interface WebApp {
 	 * 初始化应用
 	 * @param props 初始化参数
 	 */
-	public void init(DefaultProperties props);
+	public void init(DefaultProperties props,ServletContext servletContext);
 	
 	/**
 	 * 销毁应用
 	 */
-	public void destroy();
+	public void destroy(ServletContext servletContext);
 }

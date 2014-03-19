@@ -37,3 +37,7 @@ A framework which help you download your web library and load web context.
 - 1.0.1
     + add ServletRequestProperties which is a Properties wrapper for HttpServletRequest.
     + add ServletConfigProperties which is a Properties wrapper for ServletConfig.
+    
+- 1.0.2 
+	+ add servletContext parameter to {@link com.anysoft.webloader.WebApp#init(DefaultProperties, ServletContext) WebApp.init()} 
+	and {@link com.anysoft.webloader.WebApp#destroy(ServletContext) WebApp.destroy()}

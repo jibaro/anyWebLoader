@@ -1,19 +1,14 @@
 package com.anysoft.webloader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.anysoft.util.IOTools;
 
 /**
  * Servlet代理

@@ -38,6 +38,8 @@ import com.anysoft.util.PropertiesConstants;
  * {@link WebApp}实现类，缺省为com.logicbus.backend.server.LogicBusApp<br>
  * 
  * @author duanyy
+ * @version 1.0.2 
+ * - class {@link com.anysoft.webloader.WebApp WebApp} is changed.
  * 
  */
 public class WebAppContextListener implements ServletContextListener {
@@ -46,9 +48,8 @@ public class WebAppContextListener implements ServletContextListener {
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent e) {
-		// TODO Auto-generated method stub
 		if (app != null){
-			app.destroy();
+			app.destroy(e.getServletContext());
 		}
 	}
 
@@ -80,7 +81,7 @@ public class WebAppContextListener implements ServletContextListener {
 		
 		try {
 			app = (WebApp) classLoader.loadClass(appClass).newInstance();
-			app.init(props);
+			app.init(props,e.getServletContext());
 		} catch (Exception ex){
 			logger.error("Can not init app",ex);
 		}
