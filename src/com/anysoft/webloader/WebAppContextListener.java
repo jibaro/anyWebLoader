@@ -38,8 +38,10 @@ import com.anysoft.util.PropertiesConstants;
  * {@link WebApp}实现类，缺省为com.logicbus.backend.server.LogicBusApp<br>
  * 
  * @author duanyy
- * @version 1.0.2 
- * - class {@link com.anysoft.webloader.WebApp WebApp} is changed.
+ * @version 1.0.2 <br>
+ * - class {@link com.anysoft.webloader.WebApp WebApp} is changed.<br>
+ * @version 1.0.3 [20140325 by duanyy] <br> 
+ * - Add some varibles to global settings.<br>
  * 
  */
 public class WebAppContextListener implements ServletContextListener {
@@ -58,6 +60,11 @@ public class WebAppContextListener implements ServletContextListener {
 		// TODO Auto-generated method stub
 		ServletContext sc = e.getServletContext();
 		DefaultProperties props = new DefaultProperties();
+		
+		//20140325 duanyy 将ServletContext里面的一些信息写入全局变量
+		props.SetValue("webcontext.path", sc.getContextPath());
+		props.SetValue("webcontext.realPath", sc.getRealPath("/"));
+		
 		logger.info("Get parameters from ServletContext..");
 		@SuppressWarnings("unchecked")
 		Enumeration<String> names = sc.getInitParameterNames();
