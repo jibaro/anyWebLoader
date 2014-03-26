@@ -5,12 +5,15 @@ import java.net.URL;
 
 
 import com.anysoft.util.BaseException;
+import com.anysoft.util.Settings;
 import com.anysoft.util.URLocation;
 
 /**
  * 基于Java内部文件的资源装入器
  * @author duanyy
- *
+ * 
+ * @version 1.0.4 [20140326 duanyy]
+ * - 可定制装入资源的Java类，解决以前跨ClassLoader无法取资源文件的问题
  */
 public class JavaResourceLoader implements ResourceLoader {
 	/**
@@ -28,32 +31,47 @@ public class JavaResourceLoader implements ResourceLoader {
 			throw new BaseException(JavaResourceLoader.class.getName(),
 					"Can not find path from url:" + _url.toString());
 		}
-		return load(_url.getPath(),_context);
+		@SuppressWarnings("rawtypes")
+		Class clazz = getCurrentClass(_url);
+		return clazz.getResourceAsStream(_url.getPath());
 	}
 
 	/**
-	 * 装入输入流
-	 * @param _path 文件路径
-	 * @param _context 上下文
-	 * @return　输入流实例
-	 * @throws BaseException 
-	 */	
+	 * 获取装入资源时所用的class
+	 * @param _url URL
+	 * @return class
+	 */
 	@SuppressWarnings("rawtypes")
-	public InputStream load(String _path,Object _context)  throws BaseException {
-	    ClassLoader cL = Thread.currentThread().getContextClassLoader();
-		InputStream in = cL.getResourceAsStream(_path);
-		if (in == null){
-			cL = JavaResourceLoader.class.getClassLoader();
-			in = cL.getResourceAsStream(_path);
-			if (in == null){
-				Class _class = getClass();
-				if (_context instanceof Class){
-					_class = (Class)_context;
-				}		
-				in = _class.getResourceAsStream(_path);
+	protected Class getCurrentClass(URLocation _url){
+		String className = "";
+		if (_url.hasFragment()){
+			//将fragment当作className
+			className = _url.getFragment();
+			if (className == null || className.length() <= 0){
+				if (_url.hasQuery()){
+					className = _url.getQuery();
+				}
 			}
 		}
-	    return in;
+		
+		if (className == null || className.length() <= 0){
+			return getClass();
+		}
+		
+		ClassLoader cl = null;
+		{
+			Settings settings = Settings.get();
+			cl = (ClassLoader) settings.get("classLoader");
+		}
+		if (cl == null){
+			cl = Thread.currentThread().getContextClassLoader();
+		}
+		
+		try {
+			return cl.loadClass(className);
+		} catch (ClassNotFoundException e) {
+			return getClass();
+		}
 	}
 	/**
 	 * 生成资源的标准URL
@@ -63,7 +81,6 @@ public class JavaResourceLoader implements ResourceLoader {
 	 * @return　资源对应的URL
 	 * @throws BaseException 
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public URL createURL(URLocation _url, Object _context) throws BaseException {
 		if (!_url.hasPath()) {
@@ -71,19 +88,8 @@ public class JavaResourceLoader implements ResourceLoader {
 					"Can not find path from url:" + _url.toString());
 		}
 		
-	    ClassLoader cL = Thread.currentThread().getContextClassLoader();
-		URL in = cL.getResource(_url.getPath());
-		if (in == null){
-			cL = JavaResourceLoader.class.getClassLoader();
-			in = cL.getResource(_url.getPath());
-			if (in == null){
-				Class _class = getClass();
-				if (_context instanceof Class){
-					_class = (Class)_context;
-				}		
-				in = _class.getResource(_url.getPath());
-			}
-		}
-	    return in;
+		@SuppressWarnings("rawtypes")
+		Class clazz = getCurrentClass(_url);
+		return clazz.getResource(_url.getPath());
 	}	
 }

@@ -44,3 +44,6 @@ A framework which help you download your web library and load web context.
 	
 - 1.0.3 [20140325 duanyy]
     + Add some varibles to global settings.
+    
+- 1.0.4 [20140326 duanyy]
+    + 可定制装入资源的Java类，解决以前跨ClassLoader无法取资源文件的问题
