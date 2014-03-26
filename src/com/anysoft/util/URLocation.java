@@ -10,6 +10,9 @@ import java.net.URLEncoder;
  * URLocation
  * 
  * @author duanyy
+ * @version 1.0.5 [20140326 duanyy]
+ * - 路径中增加对windows路径的支持(支持\)
+ * 
  */
 public final class URLocation {
 	public final int URL_SCHEME = 1;
@@ -307,7 +310,7 @@ public final class URLocation {
 			current = get(url,++next);
 			
 			while (current != 0 && current != '#' && current != '?'){
-				if (isUnreserved(current) || isSubDelim(current) || isEscape(url,next) || current == ':' || current == '@' || current == '/'){
+				if (isUnreserved(current) || isSubDelim(current) || isEscape(url,next) || current == ':' || current == '@' || current == '/' || current == '\\'){
 					path += current;
 				}else{
 					path += escape(String.valueOf(current),encoding);
@@ -320,7 +323,7 @@ public final class URLocation {
 				current = get(url,++next);
 				
 				while (current != 0 && current != '#' && current != '?'){
-					if (isUnreserved(current) || isSubDelim(current) || isEscape(url,next) || current == ':' || current == '@' || current == '/'){
+					if (isUnreserved(current) || isSubDelim(current) || isEscape(url,next) || current == ':' || current == '@' || current == '/' || current == '\\'){
 						path += current;
 					}else{
 						path += escape(String.valueOf(current),encoding);

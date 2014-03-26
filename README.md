@@ -47,3 +47,6 @@ A framework which help you download your web library and load web context.
     
 - 1.0.4 [20140326 duanyy]
     + 可定制装入资源的Java类，解决以前跨ClassLoader无法取资源文件的问题
+    
+- 1.0.5 [20140326 duanyy]
+    + URLocation增加对windows路径的支持(支持\)
