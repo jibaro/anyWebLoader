@@ -14,6 +14,11 @@ import com.anysoft.util.Manager;
  * @author duanyy
  * @since 1.0.6
  * @param <data> 缓存对象类
+ * 
+ * @version 1.0.7 [20140409 duanyy]
+ * + 增加{@link com.anysoft.cache.CacheManager#_get(String)
+ * + 增加{@link com.anysoft.cache.CacheManager#_add(String, Cachable)
+ * 
  */
 public class CacheManager<data extends Cachable> extends Manager<data> 
 implements Provider<data>,ChangeAware<data> {
@@ -80,6 +85,35 @@ implements Provider<data>,ChangeAware<data> {
 		}
 	}	
 
+	/**
+	 * 获取指定ID的数据
+	 * 
+	 * <br>
+	 * 提供一个快速接口给子类使用.
+	 * @param id ID
+	 * @return
+	 * @since 1.0.7
+	 */
+	protected data _get(String id){
+		return super.get(id);
+	}
+	
+	/**
+	 * 向容器中增加数据
+	 * 
+	 * <br>
+	 * 提供一个快速接口给子类使用.
+	 * @param id id
+	 * @param obj 数据对象
+	 * @return
+	 * @since 1.0.7
+	 */
+	protected void _add(String id,data obj){
+		synchronized (lock){
+			super.add(id, obj);
+		}
+	}
+	
 	@Override
 	public void add(String id, data obj) {
 		synchronized (lock){

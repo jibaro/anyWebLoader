@@ -50,3 +50,11 @@ A framework which help you download your web library and load web context.
     
 - 1.0.5 [20140326 duanyy]
     + URLocation增加对windows路径的支持(支持\)
+    
+- 1.0.6 [20140408 duanyy]
+    + 增加JSON的序列化接口及一些JSON工具类
+    + 增加缓存模型包com.anysoft.cache
+    
+- 1.0.7 [20140409 duanyy]
+    + 增加{@link com.anysoft.cache.CacheManager#_get(String)
+    + 增加{@link com.anysoft.cache.CacheManager#_add(String, Cachable)
