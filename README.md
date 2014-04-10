@@ -58,3 +58,7 @@ A framework which help you download your web library and load web context.
 - 1.0.7 [20140409 duanyy]
     + 增加{@link com.anysoft.cache.CacheManager#_get(String)
     + 增加{@link com.anysoft.cache.CacheManager#_add(String, Cachable)
+
+- 1.0.8 [20140410 duanyy]
+    + 修改{@link com.anysoft.util.JsonTools JsonTools},增加一些Json读写工具
+    
