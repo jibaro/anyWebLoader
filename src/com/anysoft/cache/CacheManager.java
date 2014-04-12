@@ -152,7 +152,7 @@ implements Provider<data>,ChangeAware<data> {
 	public void changed(String id, data obj) {
 		synchronized (lock){
 			logger.info("model is changed,id = " + id);
-			super.add(id, obj);
+			add(id, obj);
 		}
 		
 		for (ChangeAware<data> listener:listeners){
