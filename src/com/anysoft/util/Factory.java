@@ -1,5 +1,7 @@
 package com.anysoft.util;
 
+import java.lang.reflect.Constructor;
+
 import org.w3c.dom.Element;
 
 /**
@@ -9,6 +11,10 @@ import org.w3c.dom.Element;
  * @param <object> 对象的类名
  * 
  * @see XMLConfigurable
+ * 
+ * @version 1.0.9 [20140414 duanyy] <br>
+ * - 增加{@link com.anysoft.util.Factory#newInstance(String, Properties) newInstance(String, Properties)}方法，使之能够通过Properties直接初始化.
+ * 
  */
 public class Factory<object> {
 	/**
@@ -79,6 +85,40 @@ public class Factory<object> {
 				classLoader = getClass().getClassLoader();
 			}
 			return (object)classLoader.loadClass(className).newInstance();
+		} catch (Exception ex){
+			throw new BaseException(Factory.class.getName(),
+					"Can not create instance of " + className,ex);
+		}
+	}
+	
+	/**
+	 * 按照指定的module来创建对象实例
+	 * 
+	 * <br>
+	 * 按照指定的module来创建对象实例,如果对象是构造函数为object(Properties)，则采用Properties来构造实例。
+	 * 
+	 * @param _module 对象实例
+	 * @param props 初始化参数
+	 * @return 对象实例
+	 * @throws BaseException
+	 * 
+	 * @since 1.0.9
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public object newInstance(String _module,Properties props) throws BaseException{
+		String className = getClassName(_module);
+		try {
+			if (classLoader == null){
+				classLoader = getClass().getClassLoader();
+			}
+			Class<?> clazz = classLoader.loadClass(className);
+			Constructor<?> constructor = clazz.getConstructor(new Class[]{Properties.class});
+			if (constructor != null){
+				return (object)constructor.newInstance(new Object[]{props});
+			}else{
+				return (object)clazz.newInstance();
+			}
 		} catch (Exception ex){
 			throw new BaseException(Factory.class.getName(),
 					"Can not create instance of " + className,ex);
