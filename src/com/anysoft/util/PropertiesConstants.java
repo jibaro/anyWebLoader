@@ -86,6 +86,10 @@ public class PropertiesConstants {
 	 * @return int值
 	 * @see #setInt(Properties, String, int)
 	 * @since 1.0
+	 * 
+	 * @version 1.0.8 
+	 * - 修改为可从父节点取变量
+	 * 
 	 */
 	public static int getInt(Properties props,String name,int defaultValue){
 		String sInt = props.GetValue(name,"",true,true);
@@ -115,9 +119,12 @@ public class PropertiesConstants {
 	 * @param defaultValue 缺省值
 	 * @return long值
 	 * @see #setLong(Properties, String, long)
+	 * 
+	 * @version 1.0.8 
+	 * - 修改为可从父节点取变量 
 	 */	
 	public static long getLong(Properties props,String name,long defaultValue){
-		String sLong = props.GetValue(name,"",true,true);
+		String sLong = props.GetValue(name,"",true,false);
 		if (sLong.length() <= 0){
 			return defaultValue;
 		}
@@ -136,9 +143,12 @@ public class PropertiesConstants {
 	 * @return boolean值
 	 * @see #setBoolean(Properties, String, boolean)
 	 * @since 1.0 
+	 * 
+	 * @version 1.0.8 
+	 * - 修改为可从父节点取变量
 	 */
 	public static boolean getBoolean(Properties props,String name,boolean defaultValue){
-		String sBoolean = props.GetValue(name,"",true,true);
+		String sBoolean = props.GetValue(name,"",true,false);
 		if (sBoolean.length() <= 0)
 			return defaultValue;
 		if (sBoolean.equals("true")){
@@ -171,9 +181,12 @@ public class PropertiesConstants {
 	 * @return Font值
 	 * @see #setFont(Properties, String, Font)
 	 * @since 1.0
+	 * 
+	 * @version 1.0.8 
+	 * - 修改为可从父节点取变量
 	 */
 	public static Font getFont(Properties props,String name,Font defaultValue){
-		String sFont = props.GetValue(name,"",true,true);
+		String sFont = props.GetValue(name,"",true,false);
 		if (sFont.length() <= 0){
 			return defaultValue;
 		}
@@ -223,9 +236,12 @@ public class PropertiesConstants {
 	 * @return Color值
 	 * @see #setColor(Properties, String, Color)
 	 * @since 1.0
+	 * 
+	 * @version 1.0.8 
+	 * - 修改为可从父节点取变量
 	 */
 	public static Color getColor(Properties props,String name,Color defaultValue){
-		String sColor = props.GetValue(name,"",true,true);
+		String sColor = props.GetValue(name,"",true,false);
 		if (sColor.length() <= 0)
 			return defaultValue;
 		
@@ -273,9 +289,11 @@ public class PropertiesConstants {
 	 * @return Rectangle值
 	 * @since 1.0
 	 * @see #setRectangle(Properties, String, Rectangle)
+	 * @version 1.0.8 
+	 * - 修改为可从父节点取变量
 	 */
 	public static Rectangle getRectangle(Properties props,String name,Rectangle defaultValue){
-		String bounds = props.GetValue(name,"",true,true);
+		String bounds = props.GetValue(name,"",true,false);
 		
 		if (bounds == null || bounds.length() <= 0)
 			return defaultValue;
@@ -317,9 +335,11 @@ public class PropertiesConstants {
 	 * @return 变量值
 	 * @see #setDimension(Properties, String, Dimension)
 	 * @since 1.0
+	 * @version 1.0.8 
+	 * - 修改为可从父节点取变量
 	 */
 	public static Dimension getDimension(Properties props,String name,Dimension defaultValue){
-		String bounds = props.GetValue(name,"",true,true);
+		String bounds = props.GetValue(name,"",true,false);
 		
 		if (bounds == null || bounds.length() <= 0)
 			return defaultValue;
@@ -359,9 +379,11 @@ public class PropertiesConstants {
 	 * @return Insets值
 	 * @see #setInsets(Properties, String, Insets)
 	 * @since 1.0
+	 * @version 1.0.8 
+	 * - 修改为可从父节点取变量
 	 */
 	public static Insets getInsets(Properties props,String name,Insets defaultValue){
-		String insets = props.GetValue(name,"",true,true);
+		String insets = props.GetValue(name,"",true,false);
 		if (insets == null || insets.length() <= 0){
 			return defaultValue;
 		}
