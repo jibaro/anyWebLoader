@@ -92,7 +92,7 @@ public class PropertiesConstants {
 	 * 
 	 */
 	public static int getInt(Properties props,String name,int defaultValue){
-		String sInt = props.GetValue(name,"",true,true);
+		String sInt = props.GetValue(name,"",true,false);
 		if (sInt.length() <= 0){
 			return defaultValue;
 		}
