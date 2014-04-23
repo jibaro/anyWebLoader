@@ -64,3 +64,6 @@ A framework which help you download your web library and load web context.
     
 - 1.0.9 [20140414 duanyy]
     + {@link com.anysoft.util.Factory Factory},增加{@link com.anysoft.util.Factory#newInstance(String, Properties) newInstance(String, Properties)}方法，使之能够通过Properties直接初始化.
+    
+- 1.0.10 [20140423 duanyy]
+	+ 增加{@link com.anysoft.util.Confirmer Confirmer}接口
