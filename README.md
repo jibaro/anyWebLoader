@@ -67,3 +67,7 @@ A framework which help you download your web library and load web context.
     
 - 1.0.10 [20140423 duanyy]
 	+ 增加{@link com.anysoft.util.Confirmer Confirmer}接口
+
+- 1.0.11 [20140428 duanyy]
+	+ 增加压缩/解压的封装类
+	
