@@ -401,6 +401,6 @@ public class WebUpdater {
 		if (urls.length <= 0){
 			return cl;
 		}
-		return urls.length <= 0 ? cl : new URLClassLoader(urls,cl);
+		return new URLClassLoader(urls,cl);
 	}
 }

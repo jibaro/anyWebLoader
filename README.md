@@ -71,3 +71,5 @@ A framework which help you download your web library and load web context.
 - 1.0.11 [20140428 duanyy]
 	+ 增加压缩/解压的封装类
 	
+- 1.0.12 [20140430 duanyy]
+	+ 增加加密/解密的封装类
