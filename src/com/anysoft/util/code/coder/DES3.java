@@ -28,10 +28,11 @@ public class DES3 implements Coder {
 	@Override
 	public String encode(String data,String key) {
 		try {
+			String _key = padding(key);
 			String algorithm = getAlgorithm();
 
             SecureRandom random = new SecureRandom();  
-            DESedeKeySpec desKey = new DESedeKeySpec(key.getBytes());  
+            DESedeKeySpec desKey = new DESedeKeySpec(_key.getBytes());  
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(algorithm);  
             SecretKey securekey = keyFactory.generateSecret(desKey);
             
@@ -48,10 +49,11 @@ public class DES3 implements Coder {
 	@Override
 	public String decode(String data,String key) {
 		try {
+			String _key = padding(key);
 			String algorithm = getAlgorithm();
 
             SecureRandom random = new SecureRandom();  
-            DESedeKeySpec desKey = new DESedeKeySpec(key.getBytes());  
+            DESedeKeySpec desKey = new DESedeKeySpec(_key.getBytes());  
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(algorithm);  
             SecretKey securekey = keyFactory.generateSecret(desKey);
             
@@ -69,4 +71,15 @@ public class DES3 implements Coder {
 	public String createKey(){
 		return KeyGen.getKey(24);
 	}	
+	
+	protected String padding(String key){
+		if (key.length() > 24){
+			return key.substring(0,23);
+		}else{
+			for (int i = key.length() ; i < 24 ; i ++){
+				key += "0";
+			}
+			return key;
+		}
+	}
 }
