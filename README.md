@@ -74,3 +74,7 @@ A framework which help you download your web library and load web context.
 - 1.0.12 [20140430 duanyy]
 	+ 增加加密/解密的封装类
 	+ 增加简单缓存对象的实现类{@link com.anysoft.cache.SimpleModel SimpleModel}
+	
+- 1.0.13 [20140605 duanyy]
+	+ 增加MD5,SHA1加密封装类
+	
