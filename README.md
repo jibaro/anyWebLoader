@@ -78,3 +78,6 @@ A framework which help you download your web library and load web context.
 - 1.0.13 [20140605 duanyy]
 	+ 增加MD5,SHA1加密封装类
 	
+- 1.0.14 [20140615 duanyy]
+	+ 增加一些JSON工具
+	

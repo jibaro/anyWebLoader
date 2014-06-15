@@ -25,6 +25,8 @@ import org.w3c.dom.NodeList;
  * + Add {@link com.anysoft.util.JsonTools#setBoolean(Map, String, boolean) setBoolean(Map,String,boolean)} <br>
  * + Add {@link com.anysoft.util.JsonTools#getBoolean(Map, String, boolean) getBoolean(Map,String,boolean)} <br>
  * 
+ * @version 1.0.14 [20140615 duanyy] <br>
+ * + 增加一下Json工具
  */
 public class JsonTools {
 	
@@ -97,6 +99,47 @@ public class JsonTools {
 	public static void setInt(Map json,String name,int value){
 		json.put(name,value);
 	}
+
+	/**
+	 * 从Json对象中获取指定的属性值
+	 * @param json Json对象
+	 * @param name 属性名
+	 * @param defaultValue 缺省值
+	 * @return 属性值
+	 * 
+	 * @since 1.0.14
+	 */
+	@SuppressWarnings("rawtypes")
+	public static long getLong(Map json,String name,long defaultValue){
+		Object found = json.get(name);
+		if (found == null){
+			return defaultValue;
+		}
+		
+		if (found instanceof Integer){
+			return (Long)found;
+		}
+		
+		try {
+			return Long.parseLong(found.toString());
+		}catch (Exception ex){
+			return defaultValue;
+		}
+	}
+	
+	/**
+	 * 向Json对象中设置指定属性值
+	 * @param json Json对象
+	 * @param name 属性名
+	 * @param value 属性值
+	 * 
+	 * @since 1.0.14
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void setLong(Map json,String name,long value){
+		json.put(name,value);
+	}
+	
 	
 	/**
 	 * 从Json对象中获取指定的属性值
