@@ -13,6 +13,8 @@ import java.net.URLEncoder;
  * @version 1.0.5 [20140326 duanyy]
  * - 路径中增加对windows路径的支持(支持\)
  * 
+ * @version 1.0.15 [20140617 duanyy]
+ * - Path,Query,Fragment的Get函数改为unescape输出
  */
 public final class URLocation {
 	public final int URL_SCHEME = 1;
@@ -45,9 +47,9 @@ public final class URLocation {
 
 	public String getScheme(){return scheme;}
 	public String getServer(){return server;}
-	public String getPath(){return path;}
-	public String getQuery(){return query;}
-	public String getFragment(){return fragment;}
+	public String getPath(){return unescape(path,encoding);}
+	public String getQuery(){return unescape(query,encoding);}
+	public String getFragment(){return unescape(fragment,encoding);}
 	public String getUser(){
 		int pwdPos = userInfo.indexOf(':');
 		if (pwdPos < 0){
