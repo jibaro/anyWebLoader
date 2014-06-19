@@ -82,3 +82,5 @@ A framework which help you download your web library and load web context.
 	+ 增加一些JSON工具
 	+ 增加{@link com.anysoft.cache.XMLResourceSimpleModelProvider XMLResourceSimpleModelProvider}
 	
+- 1.0.15 [20140616 duanyy]
+	+ {@link com.anysoft.util.URLocation URLocation}的Path,Query,Fragment等Get函数增加unescape
