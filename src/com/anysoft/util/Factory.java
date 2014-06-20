@@ -13,7 +13,10 @@ import org.w3c.dom.Element;
  * @see XMLConfigurable
  * 
  * @version 1.0.9 [20140414 duanyy] <br>
- * - 增加{@link com.anysoft.util.Factory#newInstance(String, Properties) newInstance(String, Properties)}方法，使之能够通过Properties直接初始化.
+ * - 增加{@link com.anysoft.util.Factory#newInstance(String, Properties) newInstance(String, Properties)}方法，使之能够通过Properties直接初始化.<br>
+ * 
+ * @version 1.0.16 [20140620 duanyy] <br>
+ * - 从Settings中提取classLoader缺省值.<br>
  * 
  */
 public class Factory<object> {
@@ -82,7 +85,8 @@ public class Factory<object> {
 		String className = getClassName(_module);
 		try {
 			if (classLoader == null){
-				classLoader = getClass().getClassLoader();
+				Settings settings = Settings.get();
+				classLoader = (ClassLoader) settings.get("classLoader");
 			}
 			return (object)classLoader.loadClass(className).newInstance();
 		} catch (Exception ex){
@@ -110,7 +114,8 @@ public class Factory<object> {
 		String className = getClassName(_module);
 		try {
 			if (classLoader == null){
-				classLoader = getClass().getClassLoader();
+				Settings settings = Settings.get();
+				classLoader = (ClassLoader) settings.get("classLoader");
 			}
 			Class<?> clazz = classLoader.loadClass(className);
 			Constructor<?> constructor = clazz.getConstructor(new Class[]{Properties.class});

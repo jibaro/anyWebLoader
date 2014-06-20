@@ -84,3 +84,6 @@ A framework which help you download your web library and load web context.
 
 - 1.0.15 [20140617 duanyy]
 	+ 修正URLocation,解决路径中包含escape字符的问题
+
+- 1.0.16 [20140620 duanyy] 
+	+ Factory中的ClassLoader的缺省值从Settings中提取
