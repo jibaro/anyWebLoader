@@ -43,8 +43,8 @@ public class XmlElementProperties extends Properties {
 						continue;
 					}
 					Element _e = (Element)node;
-					String id = _e.getAttribute("Id");
-					String value = _e.getAttribute("Value");
+					String id = _e.getAttribute("id");
+					String value = _e.getAttribute("value");
 					if (id.length() <= 0){
 						continue;
 					}
