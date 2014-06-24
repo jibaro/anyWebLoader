@@ -62,6 +62,12 @@ public class Factory<object> {
 	 * @see #newInstance(String)
 	 */
 	public object newInstance(Element _xml,Properties _properties,String moduleAttr) throws BaseException{
+		String module = _xml.getAttribute(moduleAttr);
+		if (module == null || module.length() <= 0){
+			throw new BaseException(Factory.class.getName(),
+					"Can not find attr in the element,attr id = " + moduleAttr);
+		}
+		
 		object instance = newInstance(_xml.getAttribute(moduleAttr));
 		
 		if (instance instanceof XMLConfigurable){
@@ -87,6 +93,9 @@ public class Factory<object> {
 			if (classLoader == null){
 				Settings settings = Settings.get();
 				classLoader = (ClassLoader) settings.get("classLoader");
+			}
+			if (classLoader == null){
+				classLoader = Thread.currentThread().getContextClassLoader();
 			}
 			return (object)classLoader.loadClass(className).newInstance();
 		} catch (Exception ex){
@@ -117,6 +126,9 @@ public class Factory<object> {
 				Settings settings = Settings.get();
 				classLoader = (ClassLoader) settings.get("classLoader");
 			}
+			if (classLoader == null){
+				classLoader = Thread.currentThread().getContextClassLoader();
+			}			
 			Class<?> clazz = classLoader.loadClass(className);
 			Constructor<?> constructor = clazz.getConstructor(new Class[]{Properties.class});
 			if (constructor != null){

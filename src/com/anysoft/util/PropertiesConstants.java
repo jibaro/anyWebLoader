@@ -41,8 +41,23 @@ public class PropertiesConstants {
 	 * @return 变量值
 	 */
 	public static String getString(Properties props,String name,String defaultValue){
-		return props.GetValue(name, defaultValue);
+		return props.GetValue(name, defaultValue,true,false);
 	}
+	
+	/**
+	 * 获取String值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @param noParent 不取父节点
+	 * @return
+	 * @since 1.0.16
+	 */
+	public static String getString(Properties props,String name,String defaultValue,
+			boolean noParent){
+		return props.GetValue(name, defaultValue,true,noParent);
+	}
+	
 	
 	/**
 	 * 向Properties设置int值
@@ -75,9 +90,25 @@ public class PropertiesConstants {
 	 * @return 变量值
 	 */
 	public static Date getDate(Properties props,String name,Date defaultValue){
-		String value = props.GetValue(name, "");
+		String value = props.GetValue(name, "",true,false);
 		return DateUtil.parseDate(value, "yyyyMMddHHmmss",defaultValue);
 	}
+
+	/**
+	 * 从Properties获取Date值，格式：yyyyMMddHHmmss
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @param noParent 不取父节点属性
+	 * @return 变量值
+	 * 
+	 * @since 1.0.16
+	 */
+	public static Date getDate(Properties props,String name,Date defaultValue,boolean noParent){
+		String value = props.GetValue(name, "",true,noParent);
+		return DateUtil.parseDate(value, "yyyyMMddHHmmss",defaultValue);		
+	}
+	
 	/**
 	 * 从Properties中读取int值
 	 * @param props Properties实例
@@ -101,6 +132,30 @@ public class PropertiesConstants {
 		}catch (Exception ex){
 			return defaultValue;
 		}		
+	}
+
+	/**
+	 * 从Properties中读取int值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @param noParent 不取父节点
+	 * @return int值
+	 * @see #setInt(Properties, String, int)
+	 * 
+	 * @since 1.0.16
+	 * 
+	 */	
+	public static int getInt(Properties props,String name,int defaultValue,boolean noParent){
+		String sInt = props.GetValue(name,"",true,noParent);
+		if (sInt.length() <= 0){
+			return defaultValue;
+		}
+		try {
+			return Integer.parseInt(sInt);
+		}catch (Exception ex){
+			return defaultValue;
+		}			
 	}
 	
 	/**
@@ -136,6 +191,28 @@ public class PropertiesConstants {
 	}
 	
 	/**
+	 * 从Properties中读取long值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @param noParent 不取父节点
+	 * @return long值
+	 * @see #setLong(Properties, String, long)
+	 * @since 1.0.16 
+	 */		
+	public static long getLong(Properties props,String name,long defaultValue,boolean noParent){
+		String sLong = props.GetValue(name,"",true,noParent);
+		if (sLong.length() <= 0){
+			return defaultValue;
+		}
+		try{
+			return Long.parseLong(sLong);
+		}catch (Exception ex){
+			return defaultValue;
+		}		
+	}
+	
+	/**
 	 *  从Properties中获取boolean值
 	 * @param props Properties实例
 	 * @param name 变量名
@@ -155,6 +232,26 @@ public class PropertiesConstants {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 *  从Properties中获取boolean值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @param noParent 不取父节点属性
+	 * @return boolean值
+	 * @see #setBoolean(Properties, String, boolean)
+	 * @since 1.0.6 
+	 */	
+	public static boolean getBoolean(Properties props,String name,boolean defaultValue,boolean noParent){
+		String sBoolean = props.GetValue(name,"",true,noParent);
+		if (sBoolean.length() <= 0)
+			return defaultValue;
+		if (sBoolean.equals("true")){
+			return true;
+		}
+		return false;		
 	}
 	
 	/**
@@ -200,6 +297,30 @@ public class PropertiesConstants {
 	}
 	
 	/**
+	 * 从Properties中获取Font值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @param noParent 不取父节点
+	 * @return Font值
+	 * @see #setFont(Properties, String, Font)
+	 * @since 1.0.16
+	 */
+	public static Font getFont(Properties props,String name,Font defaultValue,boolean noParent){
+		String sFont = props.GetValue(name,"",true,noParent);
+		if (sFont.length() <= 0){
+			return defaultValue;
+		}
+		Font f = null;
+		try{
+			f = Font.decode(sFont);
+		}catch (Throwable t){
+			f = defaultValue;
+		}
+		return f;
+	}	
+	
+	/**
 	 * 向Properties中设置Font值
 	 * @param props Properties实例
 	 * @param name 变量名
@@ -242,6 +363,30 @@ public class PropertiesConstants {
 	 */
 	public static Color getColor(Properties props,String name,Color defaultValue){
 		String sColor = props.GetValue(name,"",true,false);
+		if (sColor.length() <= 0)
+			return defaultValue;
+		
+		Color color = null;
+		try{
+			color = Color.decode(sColor);
+		}catch (NumberFormatException ex){
+			color = defaultValue;
+		}
+		return color;
+	}
+	
+	/**
+	 * 从Properties中获取Color值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @param noParent 不取父节点属性
+	 * @return Color值
+	 * @see #setColor(Properties, String, Color)
+	 * @since 1.0.16
+	 */
+	public static Color getColor(Properties props,String name,Color defaultValue,boolean noParent){
+		String sColor = props.GetValue(name,"",true,noParent);
 		if (sColor.length() <= 0)
 			return defaultValue;
 		
@@ -315,6 +460,38 @@ public class PropertiesConstants {
 	}
 	
 	/**
+	 * 从Properties中读取Rectangle值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @param noParent 不取父节点
+	 * @return Rectangle值
+	 * @since 1.0.16
+	 * @see #setRectangle(Properties, String, Rectangle)
+	 */
+	public static Rectangle getRectangle(Properties props,String name,Rectangle defaultValue,boolean noParent){
+		String bounds = props.GetValue(name,"",true,noParent);
+		
+		if (bounds == null || bounds.length() <= 0)
+			return defaultValue;
+		
+		String [] bound = bounds.split(",");
+		if (bound.length != 4)
+			return defaultValue;
+		
+		try {
+			int x = Integer.parseInt(bound[0]);
+			int y = Integer.parseInt(bound[1]);
+			int width = Integer.parseInt(bound[2]);
+			int height = Integer.parseInt(bound[3]);
+			return new Rectangle(x, y, width, height);
+		} catch (Throwable t) {
+			
+		}
+		return defaultValue;
+	}	
+	
+	/**
 	 * 向Properties中设置Rectangle值
 	 * @param props Properties实例
 	 * @param name 变量名
@@ -357,6 +534,37 @@ public class PropertiesConstants {
 		}
 		return defaultValue;
 	}
+	
+	/**
+	 * 从Properties中获取Dimension值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @param noParent
+	 * @return 变量值
+	 * @see #setDimension(Properties, String, Dimension)
+	 * @since 1.0.16
+	 */
+	public static Dimension getDimension(Properties props,String name,Dimension defaultValue,boolean noParent){
+		String bounds = props.GetValue(name,"",true,noParent);
+		
+		if (bounds == null || bounds.length() <= 0)
+			return defaultValue;
+		
+		String [] bound = bounds.split(",");
+		if (bound.length != 2)
+			return defaultValue;
+		
+		try {
+			int width = Integer.parseInt(bound[0]);
+			int height = Integer.parseInt(bound[1]);
+			return new Dimension(width, height);
+		} catch (Throwable t) {
+			
+		}
+		return defaultValue;
+	}
+		
 	
 	/**
 	 * 向Properties中设置Dimension值
@@ -405,6 +613,40 @@ public class PropertiesConstants {
 		return defaultValue;
 	}
 	
+	
+	/**
+	 * 从Properties中获取Insets值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @param noParent 不取父节点属性
+	 * @return Insets值
+	 * @see #setInsets(Properties, String, Insets)
+	 * @since 1.0.16
+	 */
+	public static Insets getInsets(Properties props,String name,Insets defaultValue,boolean noParent){
+		String insets = props.GetValue(name,"",true,noParent);
+		if (insets == null || insets.length() <= 0){
+			return defaultValue;
+		}
+		
+		String[] inset = insets.split(",");
+		if (inset.length != 4){
+			return defaultValue;
+		}
+		
+		try {
+			int top = Integer.parseInt(inset[0]);
+			int left = Integer.parseInt(inset[1]);
+			int bottom = Integer.parseInt(inset[2]);
+			int right = Integer.parseInt(inset[3]);
+			return new Insets(top,left,bottom,right);
+		}catch (Throwable t){
+			
+		}
+		return defaultValue;
+	}	
+	
 	/**
 	 * 向Properties中设置Insets值
 	 * @param props Properties实例
@@ -417,12 +659,12 @@ public class PropertiesConstants {
 		String value = insets.top + "," + insets.left + "," + insets.bottom + "," + insets.right;
 		props.SetValue(name, value);
 	}
-	
+
 	public static String getAttribute(Properties props,String name,String defaultValue){
 		return props.GetValue(name,defaultValue,true,true);
 	}
 	
 	public static void setAttribute(Properties props,String name,String value){
 		props.SetValue(name,value);
-	}
+	}	
 }
