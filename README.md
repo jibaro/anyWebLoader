@@ -87,3 +87,6 @@ A framework which help you download your web library and load web context.
 
 - 1.0.16 [20140620 duanyy] 
 	+ Factory中的ClassLoader的缺省值从Settings中提取
+	
+- 1.0.17 [20140630 duanyy]
+	+ 修改WebAppContextListener,可以contextInitialized期间可以读取系统定义变量

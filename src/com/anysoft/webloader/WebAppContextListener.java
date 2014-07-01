@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.anysoft.util.DefaultProperties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.SystemProperties;
 
 /**
  * WebContext监听器
@@ -42,7 +43,8 @@ import com.anysoft.util.PropertiesConstants;
  * - class {@link com.anysoft.webloader.WebApp WebApp} is changed.<br>
  * @version 1.0.3 [20140325 by duanyy] <br> 
  * - Add some varibles to global settings.<br>
- * 
+ * @version 1.0.17 [20140630 duanyy] <br>
+ * - contextInitialized期间可以读取系统定义变量
  */
 public class WebAppContextListener implements ServletContextListener {
 	protected static Logger logger = LogManager.getLogger(WebAppContextListener.class);
@@ -59,7 +61,7 @@ public class WebAppContextListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent e) {
 		// TODO Auto-generated method stub
 		ServletContext sc = e.getServletContext();
-		DefaultProperties props = new DefaultProperties();
+		DefaultProperties props = new DefaultProperties("Default",new SystemProperties());
 		
 		//20140325 duanyy 将ServletContext里面的一些信息写入全局变量
 		props.SetValue("webcontext.path", sc.getContextPath());
