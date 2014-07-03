@@ -90,3 +90,6 @@ A framework which help you download your web library and load web context.
 	
 - 1.0.17 [20140630 duanyy]
 	+ 修改WebAppContextListener,可以contextInitialized期间可以读取系统定义变量
+	
+- 1.1.0 [20140703 duanyy]
+	+ 增加缓冲池相关包(com.anysoft.pool)
