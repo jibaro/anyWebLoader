@@ -93,3 +93,6 @@ A framework which help you download your web library and load web context.
 	
 - 1.1.0 [20140703 duanyy]
 	+ 增加缓冲池相关包(com.anysoft.pool)
+	
+- 1.2.0 [20140708 duanyy] 
+	+ 增加LoadBalance的相关包(com.anysoft.loadbalance)
