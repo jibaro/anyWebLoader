@@ -26,10 +26,15 @@ public class RoundRobin<load extends Load> implements LoadBalance<load> {
 			LoadContext<load> ctx) {
 		int size = loads.size();
 		if (size <= 0) return null;
-		if (currentSelect >= size){
-			currentSelect = 0;
+
+		load found = loads.get(currentSelect % size);
+		
+		synchronized (this){
+			currentSelect ++;
+			if (currentSelect >= size){
+				currentSelect = 0;
+			}
 		}
-		load found = loads.get(currentSelect++);
 		return found;
 	}
 
