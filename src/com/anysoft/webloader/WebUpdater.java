@@ -27,7 +27,9 @@ import com.anysoft.util.resource.ResourceFactory;
 /**
  * Web库文件更新器
  * @author duanyy
- *
+ * @version 1.2.1 [20140709 duanyy] 
+ * - 修正localLibHome设置不当造成的listFiles返回空指针问题
+ * 
  */
 public class WebUpdater {
 	/**
@@ -195,18 +197,22 @@ public class WebUpdater {
 					}
 				});
 				
-				libs.clear();
-				
-				for (File file:jars){
-					LibraryInfo lib = new LibraryInfo();
-					lib.name = file.getName();
-					lib.md5 = getLocalLibraryInfo(file.getAbsolutePath());
-					lib.localPath = localLibHome + File.separator + lib.name;
-					lib.remoteURL = "";
-					libs.add(lib);
+				if (jars != null){
+					libs.clear();
+					
+					for (File file:jars){
+						LibraryInfo lib = new LibraryInfo();
+						lib.name = file.getName();
+						lib.md5 = getLocalLibraryInfo(file.getAbsolutePath());
+						lib.localPath = localLibHome + File.separator + lib.name;
+						lib.remoteURL = "";
+						libs.add(lib);
+					}
+					
+					writeLibInfo();
+				}else{
+					logger.error("Can not find jar files in dir:" + localLibHome + ",or the dir does not exist.");
 				}
-				
-				writeLibInfo();
 			}
 		}
 	}
