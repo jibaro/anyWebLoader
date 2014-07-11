@@ -94,5 +94,8 @@ A framework which help you download your web library and load web context.
 - 1.1.0 [20140703 duanyy]
 	+ 增加缓冲池相关包(com.anysoft.pool)
 	
-- 1.2.0 [20140708 duanyy] 
-	+ 增加LoadBalance的相关包(com.anysoft.loadbalance)
+- 1.2.* [20140708 duanyy] 
+	+ 增加LoadBalance的相关包(com.anysoft.loadbalance)(1.2.0)
+	+ RoundRobin，增加并发控制(1.2.1)
+	+ Manager增加clear方法(1.2.1)
+	+ WebUpdater修正localLibHome设置不当造成的listFiles返回空指针问题(1.2.1)

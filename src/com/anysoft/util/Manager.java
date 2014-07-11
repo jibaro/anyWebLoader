@@ -8,6 +8,9 @@ import java.util.Hashtable;
  * @author duanyy
  *
  * @param <object> 对象的类名
+ * 
+ * @version 1.2.1 [20140711 duanyy]
+ * - 增加{@link #clear() clear()}方法
  */
 public class Manager<object> {
 	
@@ -56,4 +59,12 @@ public class Manager<object> {
 	 * @return 大小
 	 */
 	public int size(){return objs.size();}
+	
+	/**
+	 * 清空对象
+	 * @since 1.2.1
+	 */
+	public void clear(){
+		objs.clear();
+	}
 }
