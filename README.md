@@ -99,3 +99,5 @@ A framework which help you download your web library and load web context.
 	+ RoundRobin，增加并发控制(1.2.1)
 	+ Manager增加clear方法(1.2.1)
 	+ WebUpdater修正localLibHome设置不当造成的listFiles返回空指针问题(1.2.1)
+	+ Pool:可缓冲的对象改为AutoCloseable(1.2.2)
+	+ Pool:优化计数器的同步机制(1.2.2)

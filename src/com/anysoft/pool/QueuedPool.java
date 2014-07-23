@@ -20,8 +20,11 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @param <pooled> 缓冲池对象、
  * 
+ * @version 1.2.2 [20140722 duanyy]
+ * - 可缓冲的对象改为AutoCloseable
+ * - 优化计数器的同步机制
  */
-abstract public class QueuedPool<pooled extends Pooled> implements Pool<pooled> {
+abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<pooled> {
 	/**
 	 * a logger of log4j
 	 */
@@ -42,6 +45,11 @@ abstract public class QueuedPool<pooled extends Pooled> implements Pool<pooled> 
 	private volatile int waitCnt = 0;
 	
 	/**
+	 * 正在创建对象的进程个数
+	 */
+	private volatile int creatingCnt = 0;
+	
+	/**
 	 * 空闲队列
 	 */
 	private ConcurrentLinkedQueue<pooled> idleQueue = null;
@@ -53,10 +61,15 @@ abstract public class QueuedPool<pooled extends Pooled> implements Pool<pooled> 
 	private int maxQueueLength = 10;
 
 	/**
+	 * 空闲队列长度
+	 */
+	private int idleQueueLength = 5;
+	
+	/**
 	 * 针对idleQueue的锁
 	 */
 	protected ReentrantLock lock = new ReentrantLock();
-
+	
 	/**
 	 * 条件，空闲队列非空
 	 */
@@ -66,11 +79,19 @@ abstract public class QueuedPool<pooled extends Pooled> implements Pool<pooled> 
 	public int getIdleQueueLength(){return idleCnt;}
 	public int getWaitQueueLength(){return waitCnt;}
 	public int getMaxQueueLength(){return maxQueueLength;}
+	public int getCreatingQueueLength(){return creatingCnt;}
+	
 	/**
 	 * 获取maxQueueLength的参数ID
 	 * @return 参数ID
 	 */
 	abstract protected String getIdOfMaxQueueLength();
+	
+	/**
+	 * 获取idleQueueLength的参数ID
+	 * @return 参数ID
+	 */
+	abstract protected String getIdOfIdleQueueLength();	
 	
 	@Override
 	public void create(Properties props) {
@@ -79,6 +100,10 @@ abstract public class QueuedPool<pooled extends Pooled> implements Pool<pooled> 
 		maxQueueLength = PropertiesConstants.getInt(props, id, maxQueueLength,false);
 		maxQueueLength = maxQueueLength <= 0 ? 10 : maxQueueLength;
 		
+		id = getIdOfIdleQueueLength();
+		idleQueueLength = PropertiesConstants.getInt(props, id, idleQueueLength,false);
+		idleQueueLength = idleQueueLength <= 0? maxQueueLength : idleQueueLength;
+				
 		idleQueue = new ConcurrentLinkedQueue<pooled>();		
 	}
 
@@ -86,35 +111,64 @@ abstract public class QueuedPool<pooled extends Pooled> implements Pool<pooled> 
 	public void close() {
 		pooled found = null;
 		while (( found = idleQueue.poll())!= null){
-			found.destroy();
+			close(found);
 		}
 		idleCnt = 0;
 		waitCnt = 0;
 		workingCnt = 0;
+		creatingCnt = 0;
 	}
 
+	private synchronized int workingIncr(int count){
+		workingCnt += count;
+		return workingCnt;
+	}
+
+	private synchronized int idleIncr(int count){
+		idleCnt += count;
+		return idleCnt;
+	}
+	
+	private synchronized int creatingIncr(int count){
+		creatingCnt += count;
+		return creatingCnt;
+	}	
+	
+	
+	private void close(pooled toClose){
+		try {
+			toClose.close();
+		} catch (Exception e) {
+		}
+	}
+	
 	@Override
 	public pooled borrowObject(int priority,int timeout) throws BaseException {
 		//当前优先级所允许的最大长度
 		int maxLength = maxQueueLength * (1+priority);
-		if (workingCnt + idleCnt < maxLength){
+		if (workingCnt + idleCnt + creatingCnt < maxLength){
 			//当前对象个数小于所允许的最大长度
 			if (idleQueue.isEmpty()){
-				//空闲队列为空，直接创建一个新的对象
-				pooled found = createObject();
-				if (found != null){
-					workingCnt ++;
+			//空闲队列为空，直接创建一个新的对象
+				try {
+					creatingIncr(1);
+					pooled found = createObject();
+					if (found != null){
+						workingIncr(1);
+					}
+					return found;//sorry , perhaps be null.
+				}finally{
+					creatingIncr(-1);
 				}
-				return found;
 			}
 		}
 		if (timeout <= 0){
 			pooled found = idleQueue.poll();
 			if (found != null){
-				workingCnt ++;
-				idleCnt --;
+				workingIncr(1);
+				idleIncr(-1);
 			}
-			return found;
+			return found;//sorry, perhaps be null.
 		}else{
 			lock.lock();
 			try {
@@ -124,9 +178,8 @@ abstract public class QueuedPool<pooled extends Pooled> implements Pool<pooled> 
 						return null;
 					nanos = notEmpty.awaitNanos(nanos);
 				}
-				
-				workingCnt ++;
-				idleCnt --;
+				workingIncr(1);
+				idleIncr(-1);
 				waitCnt = lock.getQueueLength() + lock.getWaitQueueLength(notEmpty);
 				return idleQueue.poll();
 			}catch (Exception ex){
@@ -140,16 +193,17 @@ abstract public class QueuedPool<pooled extends Pooled> implements Pool<pooled> 
 
 	@Override
 	public void returnObject(pooled obj) {
-		workingCnt --;
-		if (idleCnt > 5 && workingCnt + idleCnt > maxQueueLength){
-			//如果还有５个以上的空闲，并且已经超出了最大队列长度
+		if (idleCnt > idleQueueLength){
+			//实际idle数大于许可idle数
 			//不用归还到空闲队列，直接释放
-			obj.destroy();
+			close(obj);
 			obj = null;
+			workingIncr(-1);
 		}else{
 			//归还到队列
 			idleQueue.offer(obj);
-			idleCnt ++;
+			workingIncr(-1);
+			idleIncr(1);
 		}				
 	}
 

@@ -11,8 +11,10 @@ import com.anysoft.util.Properties;
  * 
  * @param <pooled> 缓冲池对象
  * 
+ * @version 1.2.2 [20140722 duanyy]
+ * - 可缓冲的对象改为AutoCloseable
  */
-public interface Pool<pooled extends Pooled> {
+public interface Pool<pooled extends AutoCloseable> {
 	
 	/**
 	 * 创建缓冲池
