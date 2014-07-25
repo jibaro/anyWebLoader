@@ -101,3 +101,5 @@ A framework which help you download your web library and load web context.
 	+ WebUpdater修正localLibHome设置不当造成的listFiles返回空指针问题(1.2.1)
 	+ Pool:可缓冲的对象改为AutoCloseable(1.2.2)
 	+ Pool:优化计数器的同步机制(1.2.2)
+	+ Properties:增加loadFromString(String,String,String)(1.2.3)
+	

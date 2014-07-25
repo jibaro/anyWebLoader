@@ -5,6 +5,10 @@ import java.util.*;
 /**
  * 变量集
  * @author duanyy
+ * 
+ * @version 1.2.3 [20140725 duanyy]
+ * - 增加loadFromString
+ * 
  */
 abstract public class Properties {
 	/**
@@ -95,10 +99,22 @@ abstract public class Properties {
 	 * <p>从上面的字符串中可以解析出2个变量:var1和var2，其取值分别是val1和val2</p>
 	 */
 	public void loadFromString(String _para){
-		StringTokenizer __t = new StringTokenizer(_para,";");
+		loadFromString(_para,";","=");
+	}
+	
+	/**
+	 * 从字符串装入变量
+	 * @param _para 字符串
+	 * @param delimeter1 间隔符
+	 * @param delimeter2 间隔符
+	 * 
+	 * @since 1.2.3
+	 */
+	public void loadFromString(String _para,String delimeter1,String delimeter2){
+		StringTokenizer __t = new StringTokenizer(_para,delimeter1);
 	     while (__t.hasMoreTokens()) {
 	         String __pair = __t.nextToken();
-	         int __index = __pair.indexOf("=");
+	         int __index = __pair.indexOf(delimeter2);
 	         if (__index < 0){
 	        	 continue;
 	         }
