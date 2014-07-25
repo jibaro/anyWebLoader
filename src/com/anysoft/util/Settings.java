@@ -82,7 +82,7 @@ public class Settings extends DefaultProperties implements XmlSerializer{
 			in = rm.load(_url,secondary, null);
 			Document doc = XmlTools.loadFromInputStream(in);		
 			loadFromDocument(doc);			
-		} catch (Exception ex){
+		}catch (Throwable ex){
 			logger.error("Error occurs when load xml file,source=" + _url, ex);
 		}finally {
 			IOTools.closeStream(in);
