@@ -19,14 +19,21 @@ import com.anysoft.util.resource.ResourceFactory;
  * 基于XMLResource的简单模型Provider
  * @author duanyy
  * @since 1.0.14
+ * @version 1.3.0 [20140727 duanyy]
+ * - Cachable修正类名为Cacheable 
  */
-abstract public class XMLResourceSimpleModelProvider<model extends Cachable> implements Provider<model> {
+abstract public class XMLResourceSimpleModelProvider<model extends Cacheable> implements Provider<model> {
 	public XMLResourceSimpleModelProvider(Properties props){
 		doc = loadResource(props);
 	}
 	
 	@Override
 	public model load(String id) {
+		return load(id,true);
+	}
+	
+	@Override
+	public model load(String id,boolean cacheAllowed) {
 		if (doc == null) return null;
 		Node found = XmlTools.getNodeByPath(doc.getDocumentElement(), "model[@id='" + id + "']");
 		
@@ -35,7 +42,7 @@ abstract public class XMLResourceSimpleModelProvider<model extends Cachable> imp
 		Element e = (Element) found;
 		
 		return newModel(id,e);
-	}
+	}	
 
 	protected abstract Document loadResource(Properties props);
 	
@@ -45,7 +52,12 @@ abstract public class XMLResourceSimpleModelProvider<model extends Cachable> imp
 	public void addChangeListener(ChangeAware<model> listener) {
 		// to do noting
 	}
-
+	
+	@Override
+	public void removeChangeListener(ChangeAware<model> listener) {
+		// to do noting
+	}
+	
 	protected Document doc = null;
 
 	/**

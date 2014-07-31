@@ -1,7 +1,5 @@
 package com.anysoft.cache;
 
-import java.util.Vector;
-
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -17,10 +15,13 @@ import com.anysoft.util.Manager;
  * 
  * @version 1.0.7 [20140409 duanyy]
  * + 增加{@link com.anysoft.cache.CacheManager#_get(String)
- * + 增加{@link com.anysoft.cache.CacheManager#_add(String, Cachable)
+ * + 增加{@link com.anysoft.cache.CacheManager#_add(String, Cacheable)
  * 
+ * @version 1.3.0 [20140727 duanyy]
+ * - Cachable修正类名为Cacheable
+ * - 监听器列表采用ChangeAwareHub进行实现
  */
-public class CacheManager<data extends Cachable> extends Manager<data> 
+public class CacheManager<data extends Cacheable> extends Manager<data> 
 implements Provider<data>,ChangeAware<data> {
 
 	/**
@@ -57,11 +58,16 @@ implements Provider<data>,ChangeAware<data> {
 	
 	@Override
 	public data load(String id) {
+		return load(id,true);
+	}
+	
+	@Override
+	public data load(String id, boolean noCache) {
 		if (provider != null){
-			return provider.load(id);
+			return provider.load(id,noCache);
 		}
 		return null;
-	}
+	}	
 
 	@Override
 	public data get(String id) {
@@ -138,16 +144,18 @@ implements Provider<data>,ChangeAware<data> {
 		}
 	}
 
-	/**
-	 * 监听器列表
-	 */
-	protected Vector<ChangeAware<data>> listeners = new Vector<ChangeAware<data>>();
+	protected ChangeAwareHub<data> changeAware = new ChangeAwareHub<data>();
 	
 	@Override
 	public void addChangeListener(ChangeAware<data> listener) {
-		listeners.add(listener);
+		changeAware.add(listener);
 	}
 
+	@Override
+	public void removeChangeListener(ChangeAware<data> listener) {
+		changeAware.remove(listener);
+	}	
+	
 	@Override
 	public void changed(String id, data obj) {
 		synchronized (lock){
@@ -155,10 +163,8 @@ implements Provider<data>,ChangeAware<data> {
 			add(id, obj);
 		}
 		
-		for (ChangeAware<data> listener:listeners){
-			if (listener != null){
-				listener.changed(id, obj);
-			}
+		if (changeAware != null){
+			changeAware.changed(id, obj);
 		}
 	}
 }

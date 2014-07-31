@@ -12,7 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.anysoft.cache.Cachable;
+import com.anysoft.cache.Cacheable;
 import com.anysoft.util.JsonTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.XmlTools;
@@ -25,8 +25,10 @@ import com.anysoft.util.code.CoderFactory;
  * @author duanyy
  * 
  * @since 1.0.12
+ * @version 1.3.0 [20140727 duanyy]
+ * - Cachable修正类名为Cacheable 
  */
-public class SimpleModel extends Properties implements Cachable {
+public class SimpleModel extends Properties implements Cacheable {
 	protected String id = "";
 	
 	public SimpleModel(String _id){

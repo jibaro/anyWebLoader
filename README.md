@@ -103,3 +103,7 @@ A framework which help you download your web library and load web context.
 	+ Pool:优化计数器的同步机制(1.2.2)
 	+ Properties:增加loadFromString(String,String,String)(1.2.3)
 	
+- 1.3.* [20140727 duanyy]
+    + 增加可写的缓存实现(1.3.0)
+    + Cachable修正类名为Cacheable(1.3.0)
+	
