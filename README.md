@@ -106,4 +106,6 @@ A framework which help you download your web library and load web context.
 - 1.3.* [20140727 duanyy]
     + 增加可写的缓存实现(1.3.0)
     + Cachable修正类名为Cacheable(1.3.0)
+    + 增加通用的对象监控器Watcher(1.3.1)
+    + Settings:增加静态方法getClassLoader和getResourceFactory(1.3.1)
 	

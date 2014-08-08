@@ -25,7 +25,9 @@ import com.anysoft.util.resource.ResourceFactory;
  * <li>维护一个全局性的对象列表
  * 
  * @author duanyy
- *
+ * @since 1.2.6.1 [20140808 duanyy]
+ * - 增加静态方法:{@link Settings#getClassLoader()}
+ * - 增加静态方法:{@link Settings#getResourceFactory()}
  */
 public class Settings extends DefaultProperties implements XmlSerializer{
 	/**
@@ -62,6 +64,31 @@ public class Settings extends DefaultProperties implements XmlSerializer{
 			instance = new Settings();
 		}
 		return instance;
+	}
+	
+	/**
+	 * 获取当前可用的ClassLoader
+	 * @return
+	 */
+	public static ClassLoader getClassLoader(){
+		ClassLoader cl = null;
+		if (instance != null){
+			cl = (ClassLoader) instance.get("classLoader");
+		}
+		return cl == null ? Thread.currentThread().getContextClassLoader() : cl;
+	}
+	
+	/**
+	 * 获取可用的ResourceFactory
+	 * @return
+	 */
+	public static ResourceFactory getResourceFactory(){
+		ResourceFactory rf = null;
+		if (instance != null){
+			rf = (ResourceFactory)instance.get("ResourceFactory");
+		}
+		
+		return rf == null ? new ResourceFactory() : rf;
 	}
 	
 	/**
