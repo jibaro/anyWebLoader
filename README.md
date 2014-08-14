@@ -108,4 +108,6 @@ A framework which help you download your web library and load web context.
     + Cachable修正类名为Cacheable(1.3.0)
     + 增加通用的对象监控器Watcher(1.3.1)
     + Settings:增加静态方法getClassLoader和getResourceFactory(1.3.1)
+    + CacheManager:优化get方法的共享锁控制机制(1.3.2)
+    + Settings:优化get函数的共享锁机制(1.3.2)
 	

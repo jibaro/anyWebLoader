@@ -20,6 +20,9 @@ import com.anysoft.util.Manager;
  * @version 1.3.0 [20140727 duanyy]
  * - Cachable修正类名为Cacheable
  * - 监听器列表采用ChangeAwareHub进行实现
+ * 
+ * @version 1.3.2 [20140814 duanyy]
+ * - 优化get方法的共享锁机制
  */
 public class CacheManager<data extends Cacheable> extends Manager<data> 
 implements Provider<data>,ChangeAware<data> {
@@ -71,24 +74,27 @@ implements Provider<data>,ChangeAware<data> {
 
 	@Override
 	public data get(String id) {
-		synchronized (lock){
-			data found = super.get(id);
-			if (found == null){
+		data found = super.get(id);
+		if (found == null){
+			synchronized(lock){
+				found = super.get(id);
+				if (found == null){
+					found = load(id);
+					if (found != null){
+						super.add(id,found);
+					}
+				}
+			}
+		}else{
+			if (found.isExpired()){
+				//对象已过期
 				found = load(id);
 				if (found != null){
 					add(found);
-				}
-			}else{
-				if (found.isExpired()){
-					//对象已过期
-					found = load(id);
-					if (found != null){
-						add(found);
-					}					
-				}
+				}					
 			}
-			return found;
 		}
+		return found;
 	}	
 
 	/**

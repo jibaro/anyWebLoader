@@ -25,9 +25,13 @@ import com.anysoft.util.resource.ResourceFactory;
  * <li>维护一个全局性的对象列表
  * 
  * @author duanyy
- * @since 1.2.6.1 [20140808 duanyy]
+ * @since 1.3.1 [20140808 duanyy]
  * - 增加静态方法:{@link Settings#getClassLoader()}
  * - 增加静态方法:{@link Settings#getResourceFactory()}
+ * 
+ * @since 1.3.2 [20140814 duanyy]
+ * - 优化get函数的共享锁机制
+ * 
  */
 public class Settings extends DefaultProperties implements XmlSerializer{
 	/**
@@ -55,13 +59,18 @@ public class Settings extends DefaultProperties implements XmlSerializer{
 	 */
 	protected static Settings instance = null;
 	
+	protected static Object lock = new Object();
 	/**
 	 * 获取全局唯一实例
 	 * @return 对象实例
 	 */
-	synchronized public static Settings get(){
+	public static Settings get(){
 		if (null == instance){
-			instance = new Settings();
+			synchronized (lock){
+				if (null == instance){
+					instance = new Settings();
+				}
+			}
 		}
 		return instance;
 	}
