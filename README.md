@@ -110,4 +110,5 @@ A framework which help you download your web library and load web context.
     + Settings:增加静态方法getClassLoader和getResourceFactory(1.3.1)
     + CacheManager:优化get方法的共享锁控制机制(1.3.2)
     + Settings:优化get函数的共享锁机制(1.3.2)
+	+ Pool:实现Reportable接口(1.3.3)
 	

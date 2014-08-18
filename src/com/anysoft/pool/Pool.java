@@ -2,6 +2,7 @@ package com.anysoft.pool;
 
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
+import com.anysoft.util.Reportable;
 
 /**
  * 缓冲池接口
@@ -13,8 +14,11 @@ import com.anysoft.util.Properties;
  * 
  * @version 1.2.2 [20140722 duanyy]
  * - 可缓冲的对象改为AutoCloseable
+ * 
+ * @version 1.3.2 [20140815 duanyy]
+ * - 集成Reportable接口
  */
-public interface Pool<pooled extends AutoCloseable> {
+public interface Pool<pooled extends AutoCloseable> extends Reportable{
 	
 	/**
 	 * 创建缓冲池

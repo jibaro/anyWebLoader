@@ -1,5 +1,6 @@
 package com.anysoft.pool;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -7,6 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Element;
 
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
@@ -23,6 +25,9 @@ import com.anysoft.util.PropertiesConstants;
  * @version 1.2.2 [20140722 duanyy]
  * - 可缓冲的对象改为AutoCloseable
  * - 优化计数器的同步机制
+ * 
+ * @version 1.3.3 [20140815 duanyy]
+ * - 实现Reportable接口
  */
 abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<pooled> {
 	/**
@@ -75,11 +80,13 @@ abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<p
 	 */
 	protected Condition notEmpty = lock.newCondition();	
 	
-	public int getWorkingQueueLength(){return workingCnt;}
-	public int getIdleQueueLength(){return idleCnt;}
-	public int getWaitQueueLength(){return waitCnt;}
-	public int getMaxQueueLength(){return maxQueueLength;}
-	public int getCreatingQueueLength(){return creatingCnt;}
+	public int getWorkingCnt(){return workingCnt;}
+	public int getIdleCnt(){return idleCnt;}
+	public int getWaitCnt(){return waitCnt;}
+	public int getCreatingCnt(){return creatingCnt;}
+	
+	public int getMaxActive(){return maxQueueLength;}
+	public int getMaxIdle(){return idleQueueLength;}
 	
 	/**
 	 * 获取maxQueueLength的参数ID
@@ -213,4 +220,30 @@ abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<p
 	 * @throws BaseException
 	 */
 	abstract protected pooled createObject()throws BaseException;
+	
+	@Override
+	public void report(Element xml){
+		if (xml != null){
+			xml.setAttribute("idle", String.valueOf(idleCnt));
+			xml.setAttribute("wait", String.valueOf(waitCnt));
+			xml.setAttribute("creating", String.valueOf(creatingCnt));
+			xml.setAttribute("working", String.valueOf(workingCnt));
+			
+			xml.setAttribute("maxIdle", String.valueOf(idleQueueLength));
+			xml.setAttribute("maxActive", String.valueOf(maxQueueLength));
+		}
+	}
+	
+	@Override
+	public void report(Map<String,Object> json){
+		if (json != null){
+			json.put("idle", idleCnt);
+			json.put("wait", waitCnt);
+			json.put("creating",creatingCnt);
+			json.put("working", workingCnt);
+			
+			json.put("maxIdle", idleQueueLength);
+			json.put("maxActive", maxQueueLength);
+		}
+	}
 }
