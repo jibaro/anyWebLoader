@@ -112,4 +112,5 @@ A framework which help you download your web library and load web context.
     + Settings:优化get函数的共享锁机制(1.3.2)
 	+ Pool:实现Reportable接口(1.3.3)
 	+ IOTools:增加close方法用于关闭多个Closeable或AutoCloseable对象(1.3.4)
+	+ Factory:简化classLoader获取方法(1.3.5)
 	

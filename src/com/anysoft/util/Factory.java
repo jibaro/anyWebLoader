@@ -18,8 +18,12 @@ import org.w3c.dom.Element;
  * @version 1.0.16 [20140620 duanyy] <br>
  * - 从Settings中提取classLoader缺省值.<br>
  * 
+ * @version 1.3.5 [20140819 duanyy] <br>
+ * - 简化classLoader获取方法
+ * 
  */
 public class Factory<object> {
+	
 	/**
 	 * 创建所需的ClassLoader
 	 */
@@ -68,7 +72,7 @@ public class Factory<object> {
 					"Can not find attr in the element,attr id = " + moduleAttr);
 		}
 		
-		object instance = newInstance(_xml.getAttribute(moduleAttr));
+		object instance = newInstance(module);
 		
 		if (instance instanceof XMLConfigurable){
 			((XMLConfigurable)instance).configure(_xml, _properties);
@@ -76,6 +80,33 @@ public class Factory<object> {
 		
 		return instance;
 	}	
+	
+	/**
+	 * 创建新的对象实例
+	 * <p>如果对象为{@link XMLConfigurable}的实例，则调用{@link XMLConfigurable#configure(Element, Properties)}来初始化对象.</p>
+	 * @param _xml 创建对象所需的XML参数
+	 * @param _properties 所需的变量集
+	 * @param moduleAttr 表示module属性的属性名称
+	 * @param dftClass 缺省的类
+	 * @return
+	 * @throws BaseException
+	 * 
+	 * @since 1.3.5
+	 */
+	public object newInstance(Element _xml,Properties _properties,String moduleAttr,String dftClass) throws BaseException{
+		String module = _xml.getAttribute(moduleAttr);
+		if (module == null || module.length() <= 0){
+			module = dftClass;
+		}
+		
+		object instance = newInstance(module);
+		
+		if (instance instanceof XMLConfigurable){
+			((XMLConfigurable)instance).configure(_xml, _properties);
+		}
+		
+		return instance;
+	}
 	
 	/**
 	 * 按照指定的module来创建对象实例
@@ -91,11 +122,7 @@ public class Factory<object> {
 		String className = getClassName(_module);
 		try {
 			if (classLoader == null){
-				Settings settings = Settings.get();
-				classLoader = (ClassLoader) settings.get("classLoader");
-			}
-			if (classLoader == null){
-				classLoader = Thread.currentThread().getContextClassLoader();
+				classLoader = Settings.getClassLoader();
 			}
 			return (object)classLoader.loadClass(className).newInstance();
 		} catch (Exception ex){
@@ -123,12 +150,8 @@ public class Factory<object> {
 		String className = getClassName(_module);
 		try {
 			if (classLoader == null){
-				Settings settings = Settings.get();
-				classLoader = (ClassLoader) settings.get("classLoader");
+				classLoader = Settings.getClassLoader();
 			}
-			if (classLoader == null){
-				classLoader = Thread.currentThread().getContextClassLoader();
-			}			
 			Class<?> clazz = classLoader.loadClass(className);
 			Constructor<?> constructor = clazz.getConstructor(new Class[]{Properties.class});
 			if (constructor != null){
