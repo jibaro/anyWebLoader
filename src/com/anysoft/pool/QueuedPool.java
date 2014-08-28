@@ -28,8 +28,12 @@ import com.anysoft.util.PropertiesConstants;
  * 
  * @version 1.3.3 [20140815 duanyy]
  * - 实现Reportable接口
+ * 
+ * @version 1.3.7 [20140826 duanyy]
+ * - 增加Pooled对象自关闭的支持
+ * 
  */
-abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<pooled> {
+abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<pooled>,CloseAware<pooled> {
 	/**
 	 * a logger of log4j
 	 */
@@ -147,6 +151,11 @@ abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<p
 			toClose.close();
 		} catch (Exception e) {
 		}
+	}
+	
+	@Override
+	public void closeObject(pooled _pooled){
+		returnObject(_pooled);
 	}
 	
 	@Override

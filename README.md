@@ -114,3 +114,4 @@ A framework which help you download your web library and load web context.
 	+ IOTools:增加close方法用于关闭多个Closeable或AutoCloseable对象(1.3.4)
 	+ Factory:简化classLoader获取方法(1.3.5)
 	+ Pair:增加工具类Pair(1.3.6)
+	+ Pool:增加Pooled对象自关闭功能(1.3.7)
