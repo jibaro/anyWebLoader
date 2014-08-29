@@ -115,3 +115,6 @@ A framework which help you download your web library and load web context.
 	+ Factory:简化classLoader获取方法(1.3.5)
 	+ Pair:增加工具类Pair(1.3.6)
 	+ Pool:增加Pooled对象自关闭功能(1.3.7)
+	
+- 1.4.* [20140829 duanyy]
+	+ 增加用于处理轻量级数据流的包(com.anysoft.flow)(1.4.0)
