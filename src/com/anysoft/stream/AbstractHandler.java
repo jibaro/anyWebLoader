@@ -134,7 +134,7 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 			Entry<String,Measure> entry = iterator.next();
 			Element dimElem = doc.createElement("group");
 			dimElem.setAttribute("dim",entry.getKey());
-			dimElem.setAttribute("amount", entry.getValue().toString());
+			dimElem.setAttribute("amount", String.valueOf(entry.getValue().value()));
 			total += entry.getValue().value();
 			root.appendChild(dimElem);
 		}
@@ -166,7 +166,7 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 			Map<String,Object> itemObj = new HashMap<String,Object>(2);
 			
 			itemObj.put("dim", entry.getKey());
-			itemObj.put("amount", entry.getValue());
+			itemObj.put("amount", entry.getValue().value());
 			
 			items.add(itemObj);
 			total += entry.getValue().value();

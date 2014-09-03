@@ -118,3 +118,5 @@ A framework which help you download your web library and load web context.
 	
 - 1.4.* [20140829 duanyy]
 	+ 增加用于处理轻量级数据流的包(com.anysoft.flow)(1.4.0)
+	+ JsonTools：增加getDouble和setDouble(1.4.1)
+	+ HubHandler: 增加report实现(1.4.2)

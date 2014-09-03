@@ -27,6 +27,12 @@ import org.w3c.dom.NodeList;
  * 
  * @version 1.0.14 [20140615 duanyy] <br>
  * + 增加一下Json工具
+ * 
+ * @version 1.4.1 [20140901 duanyy] <br>
+ * + 增加getDouble和setDouble方法
+ * 
+ * @version 1.4.2 [20140903 duanyy] <br>
+ * + 修正getDouble和getLong的类型转换bug
  */
 public class JsonTools {
 	
@@ -91,6 +97,46 @@ public class JsonTools {
 	
 	/**
 	 * 向Json对象中设置指定属性值
+	 * @param json
+	 * @param name
+	 * @param value
+	 * 
+	 * @since 1.4.1
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void setDouble(Map json,String name,double value){
+		json.put(name, value);
+	}
+	
+	/**
+	 * 从Json对象中获取属性值
+	 * @param json
+	 * @param name
+	 * @param dftValue
+	 * @return
+	 * 
+	 * @since 1.4.1
+	 */
+	@SuppressWarnings("rawtypes")
+	public static double getDouble(Map json,String name,double dftValue){
+		Object found = json.get(name);
+		if (found == null){
+			return dftValue;
+		}
+		
+		if (found instanceof Double){
+			return (Double)found;
+		}
+		
+		try {
+			return Double.parseDouble(found.toString());
+		}catch (Exception ex){
+			return dftValue;
+		}
+	}
+	
+	/**
+	 * 向Json对象中设置指定属性值
 	 * @param json Json对象
 	 * @param name 属性名
 	 * @param value 属性值
@@ -116,7 +162,7 @@ public class JsonTools {
 			return defaultValue;
 		}
 		
-		if (found instanceof Integer){
+		if (found instanceof Long){
 			return (Long)found;
 		}
 		
