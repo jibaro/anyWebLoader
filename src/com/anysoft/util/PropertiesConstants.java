@@ -20,6 +20,10 @@ import java.util.Date;
  * 
  * @author szduanyy
  * @since 1.0
+ * 
+ * @version 1.4.3 [20140904 duanyy]
+ * - 增加getDouble和setDouble方法
+ * 
  */
 public class PropertiesConstants {
 	
@@ -211,6 +215,62 @@ public class PropertiesConstants {
 			return defaultValue;
 		}		
 	}
+	
+	/**
+	 * 向Properties设置double值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param value 变量值
+	 *
+	 * @since 1.4.3
+	 */
+	public static void setDouble(Properties props,String name,double value){
+		props.SetValue(name, String.valueOf(value));
+	}	
+	/**
+	 * 从Properties中读取double值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @return double值
+	 * @see #setDouble(Properties, String, long)
+	 * 
+	 * @since 1.4.3
+	 */	
+	public static double getDouble(Properties props,String name,double defaultValue){
+		String sLong = props.GetValue(name,"",true,false);
+		if (sLong.length() <= 0){
+			return defaultValue;
+		}
+		try{
+			return Double.parseDouble(sLong);
+		}catch (Exception ex){
+			return defaultValue;
+		}
+	}
+	
+	/**
+	 * 从Properties中读取double值
+	 * @param props Properties实例
+	 * @param name 变量名
+	 * @param defaultValue 缺省值
+	 * @param noParent 不取父节点
+	 * @return double值
+	 * @see #setDouble(Properties, String, long)
+	 * 
+	 * @since 1.4.3
+	 */		
+	public static double getDouble(Properties props,String name,double defaultValue,boolean noParent){
+		String sLong = props.GetValue(name,"",true,noParent);
+		if (sLong.length() <= 0){
+			return defaultValue;
+		}
+		try{
+			return Double.parseDouble(sLong);
+		}catch (Exception ex){
+			return defaultValue;
+		}		
+	}	
 	
 	/**
 	 *  从Properties中获取boolean值

@@ -120,3 +120,5 @@ A framework which help you download your web library and load web context.
 	+ 增加用于处理轻量级数据流的包(com.anysoft.flow)(1.4.0)
 	+ JsonTools：增加getDouble和setDouble(1.4.1)
 	+ HubHandler: 增加report实现(1.4.2)
+	+ PropertiesConstants:增加getDouble和setDouble(1.4.3)
+	+ Handler:增加pause和resume接口，可以暂时中断处理(1.4.3)

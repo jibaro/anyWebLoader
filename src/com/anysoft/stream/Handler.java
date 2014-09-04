@@ -11,6 +11,9 @@ import com.anysoft.util.XMLConfigurable;
  * @param <data>
  * 
  * @since 1.4.0
+ * 
+ * @version 1.4.3 [20140903 duanyy]
+ * - 增加pause,resume接口
  */
 public interface Handler<data extends Flowable> extends XMLConfigurable,AutoCloseable,Reportable{
 	
@@ -31,4 +34,18 @@ public interface Handler<data extends Flowable> extends XMLConfigurable,AutoClos
 	 * @return
 	 */
 	public String getHandlerType();
+	
+	/**
+	 * 暂停
+	 * 
+	 * @since 1.4.3
+	 */
+	public void pause();
+	
+	/**
+	 * 恢复
+	 * 
+	 * @since 1.4.3
+	 */
+	public void resume();
 }

@@ -23,6 +23,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @author duanyy
  * @since 1.4.0
+ * 
+ * @version 1.4.3 [20140903 duanyy]
+ * - 增加pause,resume实现
  */
 abstract public class AbstractHandler<data extends Flowable> implements Handler<data> {
 	/**
@@ -122,6 +125,8 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 		if (async && asyncWorker != null){
 			asyncWorker.report(xml);
 		}
+		
+		xml.setAttribute("isRunning", Boolean.toString(isRunning));
 	}
 	
 	private void report(Hashtable<String,Measure> _items,Element root){
@@ -154,6 +159,8 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 		if (async && asyncWorker != null){
 			asyncWorker.report(json);
 		}
+		
+		json.put("isRunning",isRunning);
 	}
 	
 	private void report(Hashtable<String,Measure> _items,Map<String,Object> json,String name){
@@ -191,19 +198,24 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 			stat(group,total_items,_data);
 			lastVisitedTime = current;
 		}
-		if (async && asyncWorker != null){
-			asyncWorker.handle(_data);
-		}else{
-			onHandle(_data);
+		if (isRunning){
+			//只有在running状体下才执行
+			if (async && asyncWorker != null){
+				asyncWorker.handle(_data);
+			}else{
+				onHandle(_data);
+			}
 		}
 	}
 
 	@Override
 	public void flush() {
-		if (async && asyncWorker != null){
-			asyncWorker.flush();
-		}else{
-			onFlush();
+		if (isRunning){
+			if (async && asyncWorker != null){
+				asyncWorker.flush();
+			}else{
+				onFlush();
+			}
 		}
 	}
 	
@@ -211,6 +223,22 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 	public String getHandlerType() {
 		return "handler";
 	}
+	
+	/**
+	 * 暂停
+	 */
+	public void pause(){
+		isRunning = false;
+	}
+	
+	/**
+	 * 恢复
+	 */
+	public void resume(){
+		isRunning = true;
+	}
+	
+	protected boolean isRunning = true;
 	
 	/**
 	 * 处理Handle事件
