@@ -9,19 +9,20 @@ import java.util.Map;
  * 
  * @since 1.0.6
  * 
+ * @version [20140912 duanyy]<br>
+ * - 将Map参数进行参数化
+ * 
  */
 public interface JsonSerializer {
 	/**
 	 * 输出到JSON对象
 	 * @param json
 	 */
-	@SuppressWarnings("rawtypes")
-	public void toJson(Map json);
+	public void toJson(Map<String,Object> json);
 	
 	/**
 	 * 从JSON对象读入
 	 * @param json
 	 */
-	@SuppressWarnings("rawtypes")
-	public void fromJson(Map json);
+	public void fromJson(Map<String,Object> json);
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -27,6 +28,9 @@ import com.anysoft.util.code.CoderFactory;
  * @since 1.0.12
  * @version 1.3.0 [20140727 duanyy]
  * - Cachable修正类名为Cacheable 
+ * 
+ * @version 1.4.4 [20140912 duanyy]
+ * - JsonSerializer中Map参数化
  */
 public class SimpleModel extends Properties implements Cacheable {
 	protected String id = "";
@@ -111,19 +115,19 @@ public class SimpleModel extends Properties implements Cacheable {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	@Override
-	public void fromJson(Map root) {
+	public void fromJson(Map<String,Object> root) {
 		fields.clear();
 		
 		Object _fieldsObject = root.get("fields");
 		if (_fieldsObject != null && _fieldsObject instanceof List){
-			for (Object _fieldObject:(List)_fieldsObject){
+			for (Object _fieldObject:(List<Object>)_fieldsObject){
 				if (!(_fieldObject instanceof Map)){
 					continue;
 				}
 				
-				Map _data = (Map)_fieldObject;
+				Map<String,Object> _data = (Map<String,Object>)_fieldObject;
 				String _value = (String)_data.get("value");
 				String _coder = (String)_data.get("coder");
 				String _isRaw = (String)_data.get("isRaw");
@@ -148,19 +152,18 @@ public class SimpleModel extends Properties implements Cacheable {
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void toJson(Map root) {
+	public void toJson(Map<String,Object> root) {
 		JsonTools.setString(root, "id", id);
 		
 		Collection<Field> _fields = fields.values();
 		
 		if (!_fields.isEmpty()){
 			
-			List _fieldList = new ArrayList();
+			List<Object> _fieldList = new ArrayList<Object>();
 			
 			for (Field field:_fields){
-				Map _field = new HashMap();				
+				Map<String,Object> _field = new HashMap<String,Object>();				
 				Coder coder = CoderFactory.newCoder(field.coder);
 				if (coder != null){
 					String key = coder.createKey();			

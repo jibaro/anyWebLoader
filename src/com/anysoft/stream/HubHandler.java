@@ -25,6 +25,9 @@ import com.anysoft.util.XmlTools;
  * @param <data>
  * 
  * @since 1.4.0
+ * 
+ * @version 1.4.4 [20140917 duanyy]
+ * - Handler:handle和flush方法增加timestamp参数，以便进行时间同步
  */
 public class HubHandler<data extends Flowable> extends AbstractHandler<data> {
 	protected static Logger logger = LogManager.getLogger(HubHandler.class);
@@ -34,19 +37,19 @@ public class HubHandler<data extends Flowable> extends AbstractHandler<data> {
 	protected List<Handler<data>> handlers = new ArrayList<Handler<data>>();
 
 	@Override
-	protected void onHandle(data _data) {
+	protected void onHandle(data _data,long timestamp) {
 		for (Handler<data> h:handlers){
 			if (h != null){
-				h.handle(_data);
+				h.handle(_data,timestamp);
 			}
 		}
 	}
 
 	@Override
-	protected void onFlush() {
+	protected void onFlush(long timestamp) {
 		for (Handler<data> h:handlers){
 			if (h != null){
-				h.flush();
+				h.flush(timestamp);
 			}
 		}
 	}

@@ -26,6 +26,9 @@ import com.anysoft.util.XmlElementProperties;
  * 
  * @version 1.4.3 [20140903 duanyy]
  * - 增加pause,resume实现
+ * 
+ * @version 1.4.4 [20140917 duanyy]
+ * - Handler:handle和flush方法增加timestamp参数，以便进行时间同步
  */
 abstract public class AbstractHandler<data extends Flowable> implements Handler<data> {
 	/**
@@ -63,10 +66,19 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 	 */
 	protected Worker<data> asyncWorker = null;	
 	
+	protected String id;
+	
+	@Override
+	public String getId(){
+		return id;
+	}
+	
 	@Override
 	public void configure(Element _e, Properties _properties)
 			throws BaseException {
 		XmlElementProperties p = new XmlElementProperties(_e,_properties);
+		
+		id = PropertiesConstants.getString(p,"id", "",true);
 		
 		enableReport = PropertiesConstants.getBoolean(p, "report.enable", enableReport,false);
 		if (enableReport){
@@ -183,7 +195,7 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 	}	
 
 	@Override
-	public void handle(data _data) {
+	public void handle(data _data,long timestamp) {
 		if (enableReport){
 			String group = _data.getStatsDimesion();
 			//当前时间
@@ -201,20 +213,20 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 		if (isRunning){
 			//只有在running状体下才执行
 			if (async && asyncWorker != null){
-				asyncWorker.handle(_data);
+				asyncWorker.handle(_data,timestamp);
 			}else{
-				onHandle(_data);
+				onHandle(_data,timestamp);
 			}
 		}
 	}
 
 	@Override
-	public void flush() {
+	public void flush(long timestamp) {
 		if (isRunning){
 			if (async && asyncWorker != null){
-				asyncWorker.flush();
+				asyncWorker.flush(timestamp);
 			}else{
-				onFlush();
+				onFlush(timestamp);
 			}
 		}
 	}
@@ -244,12 +256,12 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 	 * 处理Handle事件
 	 * @param _data
 	 */
-	abstract protected void onHandle(data _data);
+	abstract protected void onHandle(data _data,long timestamp);
 	
 	/**
 	 * 处理Flush事件
 	 */
-	abstract protected void onFlush();
+	abstract protected void onFlush(long timestamp);
 	
 	abstract protected void onConfigure(Element e, Properties p);
 
@@ -309,7 +321,7 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 		public void run() {
 			while (!stopped){
 				try {
-					flush();
+					flush(System.currentTimeMillis());
 					Thread.sleep(interval);
 				}catch (Exception ex){
 					
@@ -333,7 +345,7 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 			}
 		}
 		
-		public void handle(data _data){
+		public void handle(data _data,long timestamp){
 			queue.offer(_data);
 		
 			synchronized (this){
@@ -341,24 +353,24 @@ abstract public class AbstractHandler<data extends Flowable> implements Handler<
 				if (currentQueueLength > maxQueueLength){
 					//如果缓冲区满了，同步处理
 					data item = queue.poll();
-					handler.onHandle(item);
+					handler.onHandle(item,timestamp);
 					currentQueueLength --;
 				}
 			}
 		}
 		
-		public void flush(){
+		public void flush(long timestamp){
 			if (!queue.isEmpty()){
 				data item = queue.poll();		
 				int count = 0;
 				while (item != null){
-					handler.onHandle(item);
+					handler.onHandle(item,timestamp);
 					item = queue.poll();
 					count ++;
 				}
 				
 				currentQueueLength -= count;
-				handler.onFlush();
+				handler.onFlush(timestamp);
 			}
 		}
 		

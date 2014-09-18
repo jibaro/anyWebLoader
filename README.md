@@ -122,3 +122,6 @@ A framework which help you download your web library and load web context.
 	+ HubHandler: 增加report实现(1.4.2)
 	+ PropertiesConstants:增加getDouble和setDouble(1.4.3)
 	+ Handler:增加pause和resume接口，可以暂时中断处理(1.4.3)
+	+ JsonSerializer:将Map参数进行参数化(1.4.4)
+	+ Handler:增加getId()接口(1.4.4)
+	+ Handler:handle方法增加timestamp参数，便于同步处理时间(1.4.4)

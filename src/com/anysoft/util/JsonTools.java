@@ -33,6 +33,10 @@ import org.w3c.dom.NodeList;
  * 
  * @version 1.4.2 [20140903 duanyy] <br>
  * + 修正getDouble和getLong的类型转换bug
+ * 
+ * @version 1.4.4 [20140912 duanyy] <br>
+ * + 将Map参数进行参数化
+ * 
  */
 public class JsonTools {
 	
@@ -44,8 +48,7 @@ public class JsonTools {
 	 * @param defaultValue 缺省值
 	 * @return 属性值
 	 */
-	@SuppressWarnings("rawtypes")
-	public static String getString(Map json,String name,String defaultValue){
+	public static String getString(Map<String,Object> json,String name,String defaultValue){
 		Object found = json.get(name);
 		if (found == null){
 			return defaultValue;
@@ -65,8 +68,7 @@ public class JsonTools {
 	 * 
 	 * @since 1.0.8
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void setString(Map json,String name,String value){
+	public static void setString(Map<String,Object> json,String name,String value){
 		json.put(name, value);
 	}
 	
@@ -77,8 +79,7 @@ public class JsonTools {
 	 * @param defaultValue 缺省值
 	 * @return 属性值
 	 */
-	@SuppressWarnings("rawtypes")
-	public static int getInt(Map json,String name,int defaultValue){
+	public static int getInt(Map<String,Object> json,String name,int defaultValue){
 		Object found = json.get(name);
 		if (found == null){
 			return defaultValue;
@@ -103,8 +104,7 @@ public class JsonTools {
 	 * 
 	 * @since 1.4.1
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void setDouble(Map json,String name,double value){
+	public static void setDouble(Map<String,Object> json,String name,double value){
 		json.put(name, value);
 	}
 	
@@ -117,8 +117,7 @@ public class JsonTools {
 	 * 
 	 * @since 1.4.1
 	 */
-	@SuppressWarnings("rawtypes")
-	public static double getDouble(Map json,String name,double dftValue){
+	public static double getDouble(Map<String,Object> json,String name,double dftValue){
 		Object found = json.get(name);
 		if (found == null){
 			return dftValue;
@@ -141,8 +140,7 @@ public class JsonTools {
 	 * @param name 属性名
 	 * @param value 属性值
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void setInt(Map json,String name,int value){
+	public static void setInt(Map<String,Object> json,String name,int value){
 		json.put(name,value);
 	}
 
@@ -155,8 +153,7 @@ public class JsonTools {
 	 * 
 	 * @since 1.0.14
 	 */
-	@SuppressWarnings("rawtypes")
-	public static long getLong(Map json,String name,long defaultValue){
+	public static long getLong(Map<String,Object> json,String name,long defaultValue){
 		Object found = json.get(name);
 		if (found == null){
 			return defaultValue;
@@ -181,8 +178,7 @@ public class JsonTools {
 	 * 
 	 * @since 1.0.14
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void setLong(Map json,String name,long value){
+	public static void setLong(Map<String,Object> json,String name,long value){
 		json.put(name,value);
 	}
 	
@@ -196,8 +192,7 @@ public class JsonTools {
 	 * 
 	 * @since 1.0.8
 	 */
-	@SuppressWarnings("rawtypes")
-	public static boolean getBoolean(Map json,String name,boolean defaultValue){
+	public static boolean getBoolean(Map<String,Object> json,String name,boolean defaultValue){
 		Object found = json.get(name);
 		if (found == null){
 			return defaultValue;
@@ -216,13 +211,12 @@ public class JsonTools {
 	 * @param name 属性名
 	 * @param value 属性值
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void setBoolean(Map json,String name,boolean value){
+	public static void setBoolean(Map<String,Object> json,String name,boolean value){
 		json.put(name,value?"true":"false");
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void xml2Json(Element root, Map json) {
+	@SuppressWarnings("unchecked")
+	public static void xml2Json(Element root, Map<String,Object> json) {
 		NodeList children = root.getChildNodes();
 
 		for (int i = 0, length = children.getLength(); i < length; i++) {
@@ -236,13 +230,13 @@ public class JsonTools {
 			case Node.ELEMENT_NODE:
 				Element e = (Element) n;
 				String key = e.getNodeName();
-				List array = null;
+				List<Object> array = null;
 				Object found = json.get(key);
 				if (found != null){
 					if (found instanceof List){
-						array = (List)found;
+						array = (List<Object>)found;
 					}else{
-						array = new ArrayList();
+						array = new ArrayList<Object>();
 						Object removed = json.remove(key);
 						if (removed != null)
 						array.add(removed);
@@ -250,7 +244,7 @@ public class JsonTools {
 					}
 				}
 				
-				Map map = new HashMap();
+				Map<String,Object> map = new HashMap<String,Object>();
 				//clone attribute
 				{
 					NamedNodeMap attrs = e.getAttributes();
@@ -272,17 +266,17 @@ public class JsonTools {
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public static void json2Xml(List json,Element e,String key){
+	@SuppressWarnings("unchecked")
+	public static void json2Xml(List<Object> json,Element e,String key){
 		Document doc = e.getOwnerDocument();
 		for (Object item:json){
 			if (item instanceof Map){
 				Element newElem = doc.createElement(key);
-				json2Xml((Map)item,newElem);
+				json2Xml((Map<String,Object>)item,newElem);
 				e.appendChild(newElem);
 			}else{
 				if (item instanceof List){
-					json2Xml((List)item,e,key);
+					json2Xml((List<Object>)item,e,key);
 				}else{
 					Element newElem = doc.createElement(key);
 					newElem.setAttribute(key, item.toString());
@@ -292,23 +286,23 @@ public class JsonTools {
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public static void json2Xml(Map json,Element e){
-		Set<?> keys = json.keySet();
-		Iterator iter = keys.iterator();
+	@SuppressWarnings("unchecked")
+	public static void json2Xml(Map<String,Object> json,Element e){
+		Set<String> keys = json.keySet();
+		Iterator<String> iter = keys.iterator();
 		Document doc = e.getOwnerDocument();
 		
 		while (iter.hasNext()){
-			String key = iter.next().toString();
+			String key = iter.next();
 			Object data = json.get(key);
 			if (data instanceof List){
-				List list = (List)data;
+				List<Object> list = (List<Object>)data;
 				json2Xml(list,e,key);
 				continue;
 			}
 			if (data instanceof Map){
 				Element newElem = doc.createElement(key);
-				json2Xml((Map)data,newElem);
+				json2Xml((Map<String,Object>)data,newElem);
 				e.appendChild(newElem);
 				continue;
 			}
@@ -316,17 +310,17 @@ public class JsonTools {
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void clone(List src,List dest){
+	@SuppressWarnings("unchecked")
+	public static void clone(List<Object> src,List<Object> dest){
 		for (Object item:src){
 			if (item instanceof Map){
-				Map newData = new HashMap();
-				clone((Map)item,newData);
+				Map<String,Object> newData = new HashMap<String,Object>();
+				clone((Map<String,Object>)item,newData);
 				dest.add(newData);
 			}else{
 				if (item instanceof List){
-					List newList = new ArrayList();
-					clone((List)item,newList);
+					List<Object> newList = new ArrayList<Object>();
+					clone((List<Object>)item,newList);
 				}else{
 					dest.add(item.toString());
 				}
@@ -334,24 +328,24 @@ public class JsonTools {
 		}
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void clone(Map src,Map dest){
-		Set<?> keys = src.keySet();
-		Iterator iter = keys.iterator();
+	@SuppressWarnings("unchecked")
+	public static void clone(Map<String,Object> src,Map<String,Object> dest){
+		Set<String> keys = src.keySet();
+		Iterator<String> iter = keys.iterator();
 		
 		while (iter.hasNext()){
 			String key = iter.next().toString();
 			Object data = src.get(key);
 			if (data instanceof List){
-				List list = (List)data;
-				List newList = new ArrayList();
+				List<Object> list = (List<Object>)data;
+				List<Object> newList = new ArrayList<Object>();
 				clone(list,newList);
 				dest.put(key, newList);
 				continue;
 			}
 			if (data instanceof Map){
-				Map newData = new HashMap();
-				clone((Map)data,newData);
+				Map<String,Object> newData = new HashMap<String,Object>();
+				clone((Map<String,Object>)data,newData);
 				dest.put(key, newData);
 				continue;
 			}
