@@ -125,3 +125,6 @@ A framework which help you download your web library and load web context.
 	+ JsonSerializer:将Map参数进行参数化(1.4.4)
 	+ Handler:增加getId()接口(1.4.4)
 	+ Handler:handle方法增加timestamp参数，便于同步处理时间(1.4.4)
+	
+ - 1.5.* [20140922 duanyy]
+ 	+ 增加用于配置环境的包(com.anysoft.context)(1.5.0)
