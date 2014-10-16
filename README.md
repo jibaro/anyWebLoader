@@ -128,3 +128,4 @@ A framework which help you download your web library and load web context.
 	
  - 1.5.* [20140922 duanyy]
  	+ 增加用于配置环境的包(com.anysoft.context)(1.5.0)
+ 	+ 增加缓冲池实现：QueuedPool2(1.5.1)

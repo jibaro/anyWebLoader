@@ -18,26 +18,14 @@ import com.anysoft.util.PropertiesConstants;
  * 基于队列的缓冲池
  * 
  * @author duanyy
- * @since 1.1.0
- * 
- * @param <pooled> 缓冲池对象、
- * 
- * @version 1.2.2 [20140722 duanyy]
- * - 可缓冲的对象改为AutoCloseable
- * - 优化计数器的同步机制
- * 
- * @version 1.3.3 [20140815 duanyy]
- * - 实现Reportable接口
- * 
- * @version 1.3.7 [20140826 duanyy]
- * - 增加Pooled对象自关闭的支持
- * 
+ *
+ * @since 1.5.1
  */
-abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<pooled>,CloseAware<pooled> {
+abstract public class QueuedPool2<pooled extends AutoCloseable> implements Pool<pooled>,CloseAware<pooled> {
 	/**
 	 * a logger of log4j
 	 */
-	protected Logger logger = LogManager.getLogger(QueuedPool.class);
+	protected Logger logger = LogManager.getLogger(QueuedPool2.class);
 	/**
 	 * 正在工作的对象个数
 	 */
@@ -162,30 +150,38 @@ abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<p
 	public pooled borrowObject(int priority,int timeout) throws BaseException {
 		//当前优先级所允许的最大长度
 		int maxLength = maxQueueLength * (1+priority);
-		if (workingCnt + idleCnt + creatingCnt < maxLength){
-			//当前对象个数小于所允许的最大长度
-			if (idleQueue.isEmpty()){
-			//空闲队列为空，直接创建一个新的对象
-				try {
-					creatingIncr(1);
-					pooled found = createObject();
-					if (found != null){
-						workingIncr(1);
-					}
-					return found;//sorry , perhaps be null.
-				}finally{
-					creatingIncr(-1);
+		
+		//是否承诺服务
+		boolean promised = workingCnt + idleCnt + creatingCnt < maxLength;
+		
+		if (promised){
+			//已经承诺，从idle队列中抢
+			if (!idleQueue.isEmpty()){
+				//先从idle队列中拿
+				pooled found = idleQueue.poll();
+				if (found != null){
+					//拿到了
+					workingIncr(1);
+					idleIncr(-1);
+					return found;
 				}
 			}
-		}
-		if (timeout <= 0){
-			pooled found = idleQueue.poll();
-			if (found != null){
-				workingIncr(1);
-				idleIncr(-1);
+			
+			//在idle中没有抢到，直接创建一个实例
+			try {
+				creatingIncr(1);
+				pooled found = createObject();
+				if (found != null){
+					workingIncr(1);
+					return found;
+				}
+			}finally{
+				creatingIncr(-1);
 			}
-			return found;//sorry, perhaps be null.
-		}else{
+		}
+	
+		//是否愿意等待其他线程释放实例到idle队列
+		if (timeout > 0){
 			lock.lock();
 			try {
 				long nanos = TimeUnit.MILLISECONDS.toNanos(timeout);
@@ -194,10 +190,16 @@ abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<p
 						return null;
 					nanos = notEmpty.awaitNanos(nanos);
 				}
-				workingIncr(1);
-				idleIncr(-1);
-				waitCnt = lock.getQueueLength() + lock.getWaitQueueLength(notEmpty);
-				return idleQueue.poll();
+				
+				pooled found = idleQueue.poll();
+				if (found != null){
+					workingIncr(1);
+					idleIncr(-1);
+					waitCnt = lock.getQueueLength() + lock.getWaitQueueLength(notEmpty);
+				}
+				
+				//在这里也有可能没有抢到，算它倒霉
+				return found;
 			}catch (Exception ex){
 				logger.error("Error when borrowing object from pool",ex);
 				return null;
@@ -205,6 +207,8 @@ abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<p
 				lock.unlock();
 			}
 		}
+		//拿不到实例
+		return null;
 	}
 
 	@Override
@@ -240,7 +244,6 @@ abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<p
 			
 			xml.setAttribute("maxIdle", String.valueOf(idleQueueLength));
 			xml.setAttribute("maxActive", String.valueOf(maxQueueLength));
-			xml.setAttribute("module", getClass().getName());
 		}
 	}
 	
@@ -254,7 +257,6 @@ abstract public class QueuedPool<pooled extends AutoCloseable> implements Pool<p
 			
 			json.put("maxIdle", idleQueueLength);
 			json.put("maxActive", maxQueueLength);
-			json.put("module", getClass().getName());
 		}
 	}
 }
