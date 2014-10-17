@@ -1,11 +1,15 @@
 package com.anysoft.context;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -13,6 +17,7 @@ import org.w3c.dom.NodeList;
 import com.anysoft.util.BaseException;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
+import com.anysoft.util.Reportable;
 import com.anysoft.util.Watcher;
 import com.anysoft.util.WatcherHub;
 import com.anysoft.util.XmlElementProperties;
@@ -26,8 +31,11 @@ import com.anysoft.util.XmlTools;
  * @param <object>
  * 
  * @since 1.5.0
+ * 
+ * @version 1.5.2 [20141017 duanyy]
+ * - 实现Reportable接口
  */
-abstract public class Source<object> implements Context<object>,Watcher<object> {
+abstract public class Source<object extends Reportable> implements Context<object>,Watcher<object> {
 	
 	/**
 	 * logger of log4j
@@ -161,6 +169,93 @@ abstract public class Source<object> implements Context<object>,Watcher<object> 
 		caches.remove(id);
 		if (watcherHub != null){
 			watcherHub.changed(id, _data);
+		}
+	}
+	
+	@Override
+	public void report(Element xml){
+		if (xml != null){
+			xml.setAttribute("module", getClass().getName());
+			xml.setAttribute("ctxName", getContextName());
+			
+			Document doc = xml.getOwnerDocument();
+			
+			//contexts
+			{
+				Element _contexts = doc.createElement("contexts");
+				
+				for (Context<object> c:sources){
+					Element _ctx = doc.createElement(getContextName());
+					
+					c.report(_ctx);
+					
+					_contexts.appendChild(_ctx);
+				}
+				
+				xml.appendChild(_contexts);
+			}
+			
+			//caches
+			{
+				Element _caches = doc.createElement("caches");
+				
+				Enumeration<String> _keys = caches.keys();
+				
+				while (_keys.hasMoreElements()){
+					String key = _keys.nextElement();
+					object obj = caches.get(key);
+					
+					Element _cache = doc.createElement("cache");
+					
+					obj.report(_cache);
+					
+					_caches.appendChild(_cache);
+				}
+				
+				xml.appendChild(_caches);
+			}
+		}
+	}
+	
+	@Override
+	public void report(Map<String,Object> json){
+		if (json != null){
+			json.put("module", getClass().getName());
+			json.put("ctxName", getContextName());
+			
+			//contexts
+			{
+				List<Object> _contexts = new ArrayList<Object>();
+				
+				for (Context<object> c:sources){
+					Map<String,Object> _ctx = new HashMap<String,Object>();
+					
+					c.report(_ctx);
+					
+					_contexts.add(_ctx);
+				}
+				
+				json.put(getContextName(), _contexts);
+			}
+			
+			//caches
+			{
+				List<Object> _caches = new ArrayList<Object>();
+				
+				Enumeration<String> _keys = caches.keys();
+				while (_keys.hasMoreElements()){
+					String key = _keys.nextElement();
+					object obj = caches.get(key);
+					
+					Map<String,Object> _cache = new HashMap<String,Object>();
+					
+					obj.report(_cache);
+					
+					_caches.add(_cache);
+				}
+				
+				json.put("cache", _caches);
+			}
 		}
 	}
 }

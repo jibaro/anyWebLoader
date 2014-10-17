@@ -1,5 +1,7 @@
 package com.anysoft.cache;
 
+import com.anysoft.util.Watcher;
+
 
 /**
  * 缓存对象的提供者
@@ -8,7 +10,10 @@ package com.anysoft.cache;
  * 
  * @version 1.3.0 [20140727 duanyy]
  * - Cachable修正类名为Cacheable
- *  
+ * 
+ * @version 1.5.2 [20141017 duanyy]
+ * - 淘汰ChangeAware机制，采用更为通用的Watcher
+ * 
  */
 public interface Provider<data extends Cacheable> {
 	
@@ -29,14 +34,14 @@ public interface Provider<data extends Cacheable> {
 	public data load(String id,boolean cacheAllowed);
 	
 	/**
-	 * 设置Change监听器
-	 * @param listener
+	 * 注册监控器
+	 * @param watcher
 	 */
-	public void addChangeListener(ChangeAware<data> listener);
+	public void addWatcher(Watcher<data> watcher);
 	
 	/**
-	 * 清除指定的Change监听器
-	 * @param listener
+	 * 注销监控器
+	 * @param watcher
 	 */
-	public void removeChangeListener(ChangeAware<data> listener);
+	public void removeWatcher(Watcher<data> watcher);
 }

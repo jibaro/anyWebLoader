@@ -1,5 +1,6 @@
 package com.anysoft.context;
 
+import com.anysoft.util.Reportable;
 import com.anysoft.util.Watcher;
 import com.anysoft.util.XMLConfigurable;
 
@@ -12,8 +13,11 @@ import com.anysoft.util.XMLConfigurable;
  * @param <object> 配置对象
  * 
  * @since 1.5.0
+ * 
+ * @version 1.5.2 [20141017 duanyy]
+ * - 实现Reportable接口
  */
-public interface Context<object> extends XMLConfigurable, AutoCloseable {
+public interface Context<object extends Reportable> extends XMLConfigurable, AutoCloseable,Reportable {
 	
 	/**
 	 * 通过ID获取对象

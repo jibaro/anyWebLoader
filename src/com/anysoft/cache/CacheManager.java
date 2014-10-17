@@ -4,6 +4,8 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.anysoft.util.Manager;
+import com.anysoft.util.Watcher;
+import com.anysoft.util.WatcherHub;
 
 
 /**
@@ -23,9 +25,13 @@ import com.anysoft.util.Manager;
  * 
  * @version 1.3.2 [20140814 duanyy]
  * - 优化get方法的共享锁机制
+ * 
+ * @version 1.5.2 [20141017 duanyy]
+ * - 淘汰ChangeAware机制，采用更为通用的Watcher
+ * 
  */
 public class CacheManager<data extends Cacheable> extends Manager<data> 
-implements Provider<data>,ChangeAware<data> {
+implements Provider<data>,Watcher<data> {
 
 	/**
 	 * a logger of log4j
@@ -55,7 +61,7 @@ implements Provider<data>,ChangeAware<data> {
 	public CacheManager(Provider<data> _provider){
 		provider = _provider;
 		if (provider != null){
-			provider.addChangeListener(this);
+			provider.addWatcher(this);
 		}
 	}
 	
@@ -150,27 +156,49 @@ implements Provider<data>,ChangeAware<data> {
 		}
 	}
 
-	protected ChangeAwareHub<data> changeAware = new ChangeAwareHub<data>();
-	
 	@Override
-	public void addChangeListener(ChangeAware<data> listener) {
-		changeAware.add(listener);
+	public void changed(String id, data _data) {
+		synchronized (lock){
+			logger.info("model is changed,id = " + id);
+			add(id, _data);
+		}
+		
+		if (watchers != null){
+			watchers.changed(id, _data);
+		}
 	}
 
 	@Override
-	public void removeChangeListener(ChangeAware<data> listener) {
-		changeAware.remove(listener);
-	}	
-	
-	@Override
-	public void changed(String id, data obj) {
-		synchronized (lock){
-			logger.info("model is changed,id = " + id);
-			add(id, obj);
-		}
-		
-		if (changeAware != null){
-			changeAware.changed(id, obj);
+	public void added(String id, data _data) {
+		// do nothing
+		if (watchers != null){
+			watchers.added(id, _data);
 		}
 	}
+
+	@Override
+	public void removed(String id, data _data) {
+		synchronized (lock){
+			logger.info("model is removed,id = " + id);
+			remove(id);
+		}
+		
+		if (watchers != null){
+			watchers.changed(id, _data);
+		}
+	}
+
+	@Override
+	public void addWatcher(Watcher<data> watcher) {
+		if (watchers != null)
+			watchers.addWatcher(watcher);
+	}
+
+	@Override
+	public void removeWatcher(Watcher<data> watcher) {
+		if (watchers != null)
+			watchers.removeWatcher(watcher);
+	}
+	
+	protected WatcherHub<data> watchers = new WatcherHub<data>();
 }

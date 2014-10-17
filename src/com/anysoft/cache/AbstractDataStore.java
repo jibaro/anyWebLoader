@@ -4,6 +4,8 @@ import org.w3c.dom.Element;
 
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
+import com.anysoft.util.Watcher;
+import com.anysoft.util.WatcherHub;
 import com.anysoft.util.XMLConfigurable;
 import com.anysoft.util.XmlElementProperties;
 
@@ -13,6 +15,10 @@ import com.anysoft.util.XmlElementProperties;
  * @author duanyy
  *
  * @param <data>
+ * 
+ * @version 1.5.2 [20141017 duanyy]
+ * - 淘汰ChangeAware机制，采用更为通用的Watcher
+ * 
  */
 abstract public class AbstractDataStore<data extends Cacheable> implements DataStore<data>,XMLConfigurable {
 
@@ -39,16 +45,16 @@ abstract public class AbstractDataStore<data extends Cacheable> implements DataS
 	}
 
 	@Override
-	public void addChangeListener(ChangeAware<data> listener) {
-		changeAware.add(listener);
+	public void addWatcher(Watcher<data> watcher) {
+		if (watchers != null)
+			watchers.addWatcher(watcher);
 	}
 
 	@Override
-	public void removeChangeListener(ChangeAware<data> listener) {
-		changeAware.remove(listener);
-	}	
-	/**
-	 * ChangeAwareListener
-	 */
-	protected ChangeAwareHub<data> changeAware = new ChangeAwareHub<data>();	
+	public void removeWatcher(Watcher<data> watcher) {
+		if (watchers != null)
+			watchers.removeWatcher(watcher);
+	}
+	
+	protected WatcherHub<data> watchers = new WatcherHub<data>();
 }

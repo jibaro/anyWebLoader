@@ -2,17 +2,26 @@ package com.anysoft.util;
 
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.LogManager;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+
+
+
+
 
 
 import com.anysoft.util.resource.ResourceFactory;
@@ -32,8 +41,11 @@ import com.anysoft.util.resource.ResourceFactory;
  * @since 1.3.2 [20140814 duanyy]
  * - 优化get函数的共享锁机制
  * 
+ * @version 1.5.2 [20141017 duanyy]
+ * - 实现Reportable接口
+ * 
  */
-public class Settings extends DefaultProperties implements XmlSerializer{
+public class Settings extends DefaultProperties implements XmlSerializer,Reportable{
 	/**
 	 * logger of log4j
 	 */
@@ -163,13 +175,85 @@ public class Settings extends DefaultProperties implements XmlSerializer{
 		toXML(root);
 	}
 
+	@Override
+	public void report(Element xml) {
+		if (xml != null){
+			Document doc = xml.getOwnerDocument();
+			
+			//parameters
+			{
+				Element _parameters = doc.createElement("parameters");
+				toXML(_parameters);
+				xml.appendChild(_parameters);
+			}
+			//objects
+			{
+				Element _objects = doc.createElement("objects");
+
+				Enumeration<String> _keys = objects.keys();
+				while (_keys.hasMoreElements()){
+					String key = _keys.nextElement();
+					Object obj = objects.get(key);
+					
+					Element _object = doc.createElement("object");
+					_object.setAttribute("id", key);
+					_object.setAttribute("content", obj.toString());
+					_objects.appendChild(_object);
+				}
+				xml.appendChild(_objects);
+			}
+		}
+	}
+
+	@Override
+	public void report(Map<String, Object> json) {
+		if (json != null){
+			//parameters
+			{
+				List<Object> _parameters = new ArrayList<Object>();
+
+				Enumeration<String> keys = keys();
+				while (keys.hasMoreElements()){
+					String key = keys.nextElement();
+					String value = _GetValue(key);
+					
+					Map<String,Object> _parameter = new HashMap<String,Object>(2);
+					_parameter.put("id", key);
+					_parameter.put("value", value);
+					
+					_parameters.add(_parameter);
+				}
+				
+				json.put("parameter",_parameters);
+			}
+			//objects
+			{
+				List<Object> _objects = new ArrayList<Object>();
+
+				Enumeration<String> _keys = objects.keys();
+				
+				while (_keys.hasMoreElements()){
+					String key = _keys.nextElement();
+					Object obj = objects.get(key);
+					
+					Map<String,Object> _object = new HashMap<String,Object>(2);
+					
+					_object.put("id", key);
+					_object.put("content", obj.toString());
+					
+					_objects.add(_object);
+				}
+				json.put("object",_objects);
+			}
+		}
+	}
+	
 	/**
 	 * 输出到XML节点
 	 * @param root 输出信息的根节点
 	 */
 	@Override
 	public void toXML(Element root) {
-		// TODO Auto-generated method stub
 		//为了输出文件的美观，添加一个\n文件节点
 		Document doc = root.getOwnerDocument();
 		root.appendChild(doc.createTextNode("\n"));
@@ -196,7 +280,6 @@ public class Settings extends DefaultProperties implements XmlSerializer{
 	 */
 	@Override
 	public void fromXML(Element root) {
-		// TODO Auto-generated method stub
 		NodeList nodeList = root.getChildNodes();	
 		for (int i = 0 ; i < nodeList.getLength() ; i ++){
 			Node node = nodeList.item(i);
@@ -261,4 +344,5 @@ public class Settings extends DefaultProperties implements XmlSerializer{
 	public void unregisterObject(String id){
 		objects.remove(id);
 	}
+
 }

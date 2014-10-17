@@ -129,3 +129,8 @@ A framework which help you download your web library and load web context.
  - 1.5.* [20140922 duanyy]
  	+ 增加用于配置环境的包(com.anysoft.context)(1.5.0)
  	+ 增加缓冲池实现：QueuedPool2(1.5.1)
+ 	+ Context：增加Reportable实现(1.5.2)
+	+ 增加Selector机制(com.anysoft.selector)(1.5.2)
+	+ Settings:实现Reportable接口(1.5.2)
+	+ 增加简单计数模型：Counter(1.5.2)
+	+ 淘汰ChangeAware模型，转为更为通用的Watcher模型(1.5.2)

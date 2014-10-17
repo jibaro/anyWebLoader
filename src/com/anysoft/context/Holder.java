@@ -26,6 +26,10 @@ import com.anysoft.util.XmlTools;
  * @param <object>
  * 
  * @since 1.5.0
+ * 
+ * @version 1.2.9.2 [20141017 duanyy]
+ * - 增加{@link #getObjectCnt()}
+ * 
  */
 public class Holder<object> implements XMLConfigurable, AutoCloseable {
 	
@@ -91,6 +95,10 @@ public class Holder<object> implements XMLConfigurable, AutoCloseable {
 
 	public object get(String id){
 		return pools.get(id);
+	}
+	
+	public int getObjectCnt(){
+		return pools.size();
 	}
 	
 	public static class TheFactory<object> extends Factory<object>{

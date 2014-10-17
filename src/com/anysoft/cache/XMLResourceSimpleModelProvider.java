@@ -11,6 +11,7 @@ import org.w3c.dom.Node;
 import com.anysoft.util.IOTools;
 import com.anysoft.util.Properties;
 import com.anysoft.util.Settings;
+import com.anysoft.util.Watcher;
 import com.anysoft.util.XmlTools;
 import com.anysoft.util.resource.ResourceFactory;
 
@@ -21,6 +22,10 @@ import com.anysoft.util.resource.ResourceFactory;
  * @since 1.0.14
  * @version 1.3.0 [20140727 duanyy]
  * - Cachable修正类名为Cacheable 
+ * 
+ * @version 1.5.2 [20141017 duanyy]
+ * - 淘汰ChangeAware机制，采用更为通用的Watcher
+ * 
  */
 abstract public class XMLResourceSimpleModelProvider<model extends Cacheable> implements Provider<model> {
 	public XMLResourceSimpleModelProvider(Properties props){
@@ -49,12 +54,12 @@ abstract public class XMLResourceSimpleModelProvider<model extends Cacheable> im
 	protected abstract model newModel(String id,Element e);
 	
 	@Override
-	public void addChangeListener(ChangeAware<model> listener) {
+	public void addWatcher(Watcher<model> listener) {
 		// to do noting
 	}
 	
 	@Override
-	public void removeChangeListener(ChangeAware<model> listener) {
+	public void removeWatcher(Watcher<model> listener) {
 		// to do noting
 	}
 	

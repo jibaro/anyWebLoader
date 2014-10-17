@@ -9,6 +9,11 @@ import java.util.List;
  * @author duanyy
  *
  * @param <data>
+ * 
+ * @version 1.5.2 [20141017 duanyy]
+ * - 淘汰ChangeAware机制，采用更为通用的Watcher
+ * 
+ * @deprecated
  */
 public class ChangeAwareHub<data extends Cacheable> implements ChangeAware<data> {
 

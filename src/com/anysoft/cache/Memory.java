@@ -13,14 +13,18 @@ import com.anysoft.util.Properties;
  * @author duanyy
  *
  * @param <data>
+ * 
+ * @version 1.5.2 [20141017 duanyy]
+ * - 淘汰ChangeAware机制，采用更为通用的Watcher
+ * 
  */
 public class Memory<data extends Cacheable> extends AbstractDataStore<data> {
 
 	@Override
 	public void save(String id, data _data) throws BaseException {
 		datas.put(id, _data);
-		if (changeAware != null){
-			changeAware.changed(id, _data);
+		if (watchers != null){
+			watchers.changed(id, _data);
 		}
 	}
 

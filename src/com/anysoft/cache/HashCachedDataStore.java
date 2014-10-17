@@ -2,10 +2,13 @@ package com.anysoft.cache;
 
 
 import java.util.Map;
+
 import org.w3c.dom.Element;
+
 import com.anysoft.util.BaseException;
 import com.anysoft.util.Properties;
 import com.anysoft.util.PropertiesConstants;
+import com.anysoft.util.Watcher;
 
 
 /**
@@ -16,6 +19,10 @@ import com.anysoft.util.PropertiesConstants;
  * @param <data>
  * 
  * @since 1.3.0
+ * 
+ * @version 1.5.2 [20141017 duanyy]
+ * - 淘汰ChangeAware机制，采用更为通用的Watcher
+ * 
  */
 public class HashCachedDataStore<data extends Cacheable> implements DataStore<data> {
 	
@@ -97,16 +104,16 @@ public class HashCachedDataStore<data extends Cacheable> implements DataStore<da
 	}
 
 	@Override
-	public void addChangeListener(ChangeAware<data> listener) {
+	public void addWatcher(Watcher<data> listener) {
 		if (dataStore != null){
-			dataStore.addChangeListener(listener);
+			dataStore.addWatcher(listener);
 		}
 	}
 
 	@Override
-	public void removeChangeListener(ChangeAware<data> listener) {
+	public void removeWatcher(Watcher<data> listener) {
 		if (dataStore != null){
-			dataStore.removeChangeListener(listener);
+			dataStore.removeWatcher(listener);
 		}
 	}
 
