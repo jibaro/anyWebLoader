@@ -12,16 +12,12 @@ import com.anysoft.util.Properties;
  * @param <load>
  * 
  * @since 1.2.0
+ * 
+ * @version 1.5.3 [20141120 duanyy]
+ * - 改造loadbalance模型
+ * 
  */
 public interface LoadBalance<load extends Load> {
 	
-	/**
-	 * 选择负载
-	 * @param props 环境
-	 * @param loads　负载　
-	 * @param stats　负载统计
-	 * @return
-	 */
-	public load select(String key,Properties props,List<load> loads,LoadContext<load> ctx);
-
+	public load select(String key,Properties props,List<load> loads);
 }

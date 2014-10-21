@@ -134,3 +134,4 @@ A framework which help you download your web library and load web context.
 	+ Settings:实现Reportable接口(1.5.2)
 	+ 增加简单计数模型：Counter(1.5.2)
 	+ 淘汰ChangeAware模型，转为更为通用的Watcher模型(1.5.2)
+	+ 重写loadbalance模型(1.5.3)

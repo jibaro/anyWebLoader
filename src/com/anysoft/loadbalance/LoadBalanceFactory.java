@@ -10,6 +10,10 @@ import com.anysoft.util.Factory;
  * @param <load>
  * 
  * @since 1.2.0
+ * 
+ * @version 1.5.3 [20141120 duanyy]
+ * - 改造loadbalance模型
+ * 
  */
 public class LoadBalanceFactory<load extends Load> extends Factory<LoadBalance<load>> {
 	public String getClassName(String _module) throws BaseException{

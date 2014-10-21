@@ -2,35 +2,45 @@ package com.anysoft.loadbalance.impl;
 
 import java.util.List;
 
+import com.anysoft.loadbalance.AbstractLoadBalance;
 import com.anysoft.loadbalance.Load;
-import com.anysoft.loadbalance.LoadBalance;
-import com.anysoft.loadbalance.LoadContext;
 import com.anysoft.util.Properties;
 
-public class Priority<load extends Load> implements LoadBalance<load> {
+
+/**
+ * 基于优先级的LoadBalance
+ * 
+ * @author duanyy
+ *
+ * @param <load>
+ * 
+ * @version 1.5.3 [20141020 duanyy]
+ * - 改造loadbalance模型
+ */
+public class Priority<load extends Load> extends AbstractLoadBalance<load> {
 
 	public Priority(Properties props){
-		
+		super(props);
 	}	
 	
 	@Override
-	public load select(String key,Properties props, List<load> loads,
-			LoadContext<load> ctx) {
+	public load onSelect(String key,Properties props, List<load> loads) {
+		load found = null;
+		
 		int size = loads.size();
-		if (size <= 0) return null;
-			
-		int highestIndex = 0;
-		int highestPriority = 0;
-		
-		for (int i = 0 ; i < size; i ++){
-			int _p = loads.get(i).getPriority();
-			if (_p > highestPriority){
-				highestIndex = i;
-				highestPriority = _p;
+		if (size > 0){
+			int highestIndex = 0;
+			int highestPriority = 0;
+			for (int i = 0 ; i < size; i ++){
+				int _p = loads.get(i).getPriority();
+				if (_p > highestPriority){
+					highestIndex = i;
+					highestPriority = _p;
+				}
 			}
+			found = loads.get(highestIndex);
 		}
-		
-		return loads.get(highestIndex);
+		return found;
 	}
 
 }

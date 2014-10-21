@@ -1,30 +1,46 @@
 package com.anysoft.loadbalance.impl;
 
 import java.util.List;
+import java.util.Random;
 
+import com.anysoft.loadbalance.AbstractLoadBalance;
 import com.anysoft.loadbalance.Load;
-import com.anysoft.loadbalance.LoadBalance;
-import com.anysoft.loadbalance.LoadContext;
 import com.anysoft.util.Properties;
 
-public class Hash<load extends Load> implements LoadBalance<load> {
+/**
+ * 基于主键Hash的LoadBalance
+ * 
+ * @author duanyy
+ *
+ * @param <load>
+ * 
+ * @version 1.5.3 [20141020 duanyy]
+ * - 改造loadbalance模型
+ */
+public class Hash<load extends Load> extends AbstractLoadBalance<load> {
 
 	public Hash(Properties props){
-		
+		super(props);
 	}	
 	
 	@Override
-	public load select(String key,Properties props, List<load> loads,
-			LoadContext<load> ctx) {
+	public load onSelect(String key,Properties props, List<load> loads) {
+		load found = null;
+		
 		int size = loads.size();
-		if (size <= 0) return null;
+		if (size > 0){
+			int hashcode = 0;
+			if (key == null || key.length() <= 0){
+				//当没有传入Key的时候，同Rand模式
+				hashcode = r.nextInt(size) % size;	
+			}else{			
+				hashcode = key.hashCode();
+			}
+			found = loads.get((hashcode & Integer.MAX_VALUE) % size);
+		}
 		
-		if (key == null || key.length() <= 0)
-			return loads.get(0);
-		
-		int hashcode = key.hashCode();
-		int index = (hashcode<0?-hashcode:hashcode)%size;
-		return loads.get(index);
+		return found;
 	}
-
+	
+	public static Random r = new Random();
 }
